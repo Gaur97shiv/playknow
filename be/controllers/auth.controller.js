@@ -1,7 +1,11 @@
 export const signup = (req, res) => {
-    res.status(200).json({
-        message:"Signup success"
-    })
+    const{name, email, password}=req.body;
+    const emailRegex= /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)){
+        return res.status(400).json({
+            message:"Invalid email address"
+        })
+        
 }
 
 export const login = (req, res) => {
