@@ -37,8 +37,10 @@ export const signup = async (req, res) => {
             generateTokenAndSetCookie(res, savedUser._id);
             
             return res.status(201).json({
-                message: "User created successfully"
+                message: "User created successfully",
+                savedUser
             });
+          
         }
         else{
             return res.status(400).json({
@@ -52,4 +54,36 @@ export const signup = async (req, res) => {
         });
     }
 }
+
+export const login = async (req, res) => {
+    const {name, password} = req.body;
+
+    try {
+        const user = await User
+            .findOne({name});
+            if (!user) {
+                return res.status(400).json({
+                    message: "User not found"
+                });
+            }
+            const passwordMatch = await bcrypt.compare(password, user.password);
+            if (!passwordMatch) {
+                return res.status(400).json({
+                    message: "Invalid credentials"
+                });
+            }
+            generateTokenAndSetCookie(res, user._id);
+            return res.status(200).json({
+                user
+                ,message: "Login successful"
+            });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+}
+            
 
