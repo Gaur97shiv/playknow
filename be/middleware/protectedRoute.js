@@ -1,0 +1,29 @@
+import User from "../models/user.model.js";
+
+export const protectedRoute = async (req, res, next) => {
+    try{
+const token=req.cookies.jwt;
+if(!token){
+    return res.status(401).json({
+        error:"You need to login first"
+    })
+    }s
+    const decoded=jwt.verify(token,process.env.JWT_SECRET);
+    if(!decoded){
+        return res.status(401).json({
+            error:"Invalid token"
+        })
+    }
+    const user=await User.findById(decoded.UserId);
+    console.log(user);
+    if(!user){
+        return res.status(401).json({
+            error:"User not found"
+        })
+    }
+    req.user=user;
+    next();
+}catch(error){
+console.log(error);
+    }
+}
