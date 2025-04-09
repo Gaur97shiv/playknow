@@ -5,6 +5,8 @@ import { deletePost } from '../controllers/post.controller.js';
 import { commentOnPost } from '../controllers/post.controller.js';
 import { likeOrUnlikePost } from '../controllers/post.controller.js';
 import { getAllPosts } from '../controllers/post.controller.js';
+import { getAllLikedPosts } from '../controllers/post.controller.js';
+import { getAllFollowingPosts } from '../controllers/post.controller.js';
 const router = express.Router();
 
 router.post("/create",protectedRoute,createPost);
@@ -13,4 +15,6 @@ router.post("/commentOnPost/:id",protectedRoute,commentOnPost);
 router.post("/likeOrUnlike/:id",protectedRoute,likeOrUnlikePost);
 router.get("/getAllPosts",protectedRoute,getAllPosts);
 router.get("/getAllLikedPosts",protectedRoute,getAllLikedPosts);
+router.get("/following",protectedRoute,getAllFollowingPosts);
+router.get("/user/:id",protectedRoute,getAllUserPosts);
 export default router;
