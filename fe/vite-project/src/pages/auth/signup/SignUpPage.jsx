@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-import PSvg from "../../../components/svgs/P"; // <-- Correct import
+import PSvg from "../../../components/svgs/P"; 
 
 import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
