@@ -5,23 +5,59 @@ import Psvg from "../../../components/svgs/P";
 
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
+import  {useMutation } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 const LoginPage = () => {
 	const [formData, setFormData] = useState({
-		username: "",
+		name: "",
 		password: "",
 	});
 
+	const {isError,isPending,mutate ,error }=useMutation({
+		mutationFn:  async ({name, password }) => {
+			try{
+				const response = await fetch('http://localhost:5000/api/auth/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ name, password }),
+				});
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const data = await response.json();
+			}catch (error) {
+				console.error('Error during login:', error);
+				throw error;
+			}
+			
+		},
+		onSuccess: (data) => {
+			console.log('Login successful:', data);
+			toast.success('Login successful');
+			// Handle successful login, e.g., redirect or show a success message
+		},
+		onError: (error) => {
+			console.error('Login failed:', error);
+			toast.error('Login failed');
+			// Handle login error, e.g., show an error message
+		}
+	
+})
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(formData);
+		mutate(formData)
 	};
 
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
+	
 
-	const isError = false;
+	
 
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen'>
@@ -38,9 +74,9 @@ const LoginPage = () => {
 							type='text'
 							className='grow'
 							placeholder='username'
-							name='username'
+							name='name' // <-- change this from 'username' to 'name'
 							onChange={handleInputChange}
-							value={formData.username}
+							value={formData.name}
 						/>
 					</label>
 
@@ -55,8 +91,9 @@ const LoginPage = () => {
 							value={formData.password}
 						/>
 					</label>
-					<button className='btn rounded-full btn-primary text-white'>Login</button>
-					{isError && <p className='text-red-500'>Something went wrong</p>}
+					<button className='btn rounded-full btn-primary text-white'>{
+					isPending ? "Loading..." : "Login"}</button>
+					{isError && <p className='text-red-500'>{error.message}</p>}
 				</form>
 				<div className='flex flex-col gap-2 mt-4'>
 					<p className='text-white text-lg'>{"Don't"} have an account?</p>

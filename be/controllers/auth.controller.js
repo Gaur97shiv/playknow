@@ -56,35 +56,43 @@ export const signup = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-    const {name, password} = req.body;
+    const { name, password } = req.body;
+
+    if (!name || !password) {
+        return res.status(400).json({
+            message: "Name and password are required"
+        });
+    }
 
     try {
-        const user = await User
-            .findOne({name});
-            if (!user) {
-                return res.status(400).json({
-                    message: "User not found"
-                });
-            }
-            const passwordMatch = await bcrypt.compare(password, user ?.password|| " ");
-            if (!passwordMatch) {
-                return res.status(400).json({
-                    message: "Invalid credentials"
-                });
-            }
-            generateTokenAndSetCookie(res, user._id);
-            return res.status(200).json({
-                user
-                ,message: "Login successful"
+        const user = await User.findOne({ name });
+        if (!user) {
+            return res.status(401).json({
+                message: "Invalid credentials"
             });
-    }
-    catch (error) {
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password || "");
+        if (!passwordMatch) {
+            return res.status(401).json({
+                message: "Invalid credentials"
+            });
+        }
+        generateTokenAndSetCookie(res, user._id);
+
+        // Remove sensitive info before sending user object
+        const { password: pwd, ...userWithoutPassword } = user.toObject();
+
+        return res.status(200).json({
+            user: userWithoutPassword,
+            message: "Login successful"
+        });
+    } catch (error) {
         return res.status(500).json({
             message: "Internal server error",
             error: error.message
         });
     }
-}
+};
 
 export const logout = async (req, res) => {
    try{

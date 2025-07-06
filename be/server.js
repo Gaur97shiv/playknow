@@ -7,6 +7,7 @@ import notificationsRoutes from './routes/notifications.routes.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import {v2 as cloudinary} from 'cloudinary';
+import cors from 'cors';
 
 dotenv.config();
 cloudinary.config({
@@ -23,6 +24,7 @@ ConnectMongoDb();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes);
