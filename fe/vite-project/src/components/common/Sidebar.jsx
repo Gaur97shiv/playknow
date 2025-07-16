@@ -5,42 +5,42 @@ import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation } from "@tanstack/react-query";
-import{toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutAuthUser } from "../../redux/authSlice"; // <-- update import
 
 const Sidebar = () => {
-    const { isError, isPending, mutate, error } = useMutation({
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
+
+    const { mutate, error } = useMutation({
         mutationFn: async () => {
             try {
-              const res=  await fetch('http://localhost:5000/api/auth/logout', {
+                const res = await fetch('http://localhost:5000/api/auth/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 });
-
-                const data=res.json();
                 if (!res.ok) {
-                            throw new Error('Logout failed');
+                    throw new Error('Logout failed');
                 }
+                return await res.json();
             } catch (err) {
                 console.error("Logout failed", err);
+                throw err;
             }
         },
         onSuccess: () => {
-            console.log("Logout successful");
             toast.success("Logout successful");
+            dispatch(logoutAuthUser()); // <-- clear user from slice
         },
         onError: (err) => {
             console.error("Logout error:", err);
             toast.error("Logout failed");
         }
     });
-
-    const data = {
-        fullName: "John Doe",
-        username: "johndoe",
-        profileImg: "/avatars/boy1.png",
-    };
 
     return (
         <div className="md:flex-[2_2_0] w-18 max-w-52">
@@ -69,7 +69,7 @@ const Sidebar = () => {
                     </li>
                     <li className="flex justify-center md:justify-start">
                         <Link
-                            to={`/profile/${data?.username}`}
+                            to={user ? `/profile/${user?.username}` : "/login"}
                             className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer text-white"
                         >
                             <FaUser className="w-6 h-6" />
@@ -77,24 +77,25 @@ const Sidebar = () => {
                         </Link>
                     </li>
                 </ul>
-                {data && (
-                    <div className="mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full cursor-pointer"
-                        onClick={() => mutate()}>
+                {user && (
+                    <div className="mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full cursor-pointer">
                         <div className="avatar hidden md:inline-flex">
                             <div className="w-8 rounded-full">
-                                <img src={data?.profileImg || "/avatar-placeholder.png"} alt="profile" />
+                                <img src={user?.profileImg || "/avatar-placeholder.png"} alt="profile" />
                             </div>
                         </div>
                         <div className="flex justify-between flex-1">
                             <div className="hidden md:block">
-                                <p className="text-white font-bold text-sm w-20 truncate">{data?.fullName}</p>
-                                <p className="text-slate-500 text-sm">@{data?.username}</p>
+                                <p className="text-white font-bold text-sm w-20 truncate">{user?.fullName}</p>
+                                <p className="text-slate-500 text-sm">@{user?.username}</p>
                             </div>
-                            <BiLogOut onClick={(e) =>{
-                                e.preventDefault();
-                                mutate();
-
-                            }} className="w-5 h-5 cursor-pointer text-white" />
+                            <BiLogOut
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    mutate();
+                                }}
+                                className="w-5 h-5 cursor-pointer text-white"
+                            />
                         </div>
                     </div>
                 )}

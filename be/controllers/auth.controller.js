@@ -107,11 +107,3 @@ export const logout = async (req, res) => {
    })
 }
 }
-export const checkAuth = async (req, res) => {
-    const user = req.user;
-    if (user) {
-        return res.status(200).json({
-            user
-        });
-    }
-}

@@ -24,12 +24,15 @@ ConnectMongoDb();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/post", postRoutes);
-app.use("/api/notifictions",notificationsRoutes);
+app.use("/api/notifications", notificationsRoutes);
 
 
 app.listen(PORT, () => {
