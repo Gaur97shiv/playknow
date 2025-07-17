@@ -7,13 +7,15 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "../../../redux/authSlice";
+import { useNavigate } from 'react-router-dom';
+
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     password: "",
   });
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { isError, isPending, mutate, error } = useMutation({
@@ -41,8 +43,9 @@ const LoginPage = () => {
     onSuccess: (data) => {
       console.log('Login successful:', data);
       toast.success('Login successful');
-      dispatch(setAuthUser(data.user)); // <-- Directly update slice with user data
-      // Optionally: window.location.reload() or redirect
+      dispatch(setAuthUser(data.user)); 
+      navigate('/'); // Redirect to home page after successful login
+      
     },
     onError: (error) => {
       console.error('Login failed:', error);

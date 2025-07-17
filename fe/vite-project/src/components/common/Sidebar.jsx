@@ -7,7 +7,7 @@ import { BiLogOut } from "react-icons/bi";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutAuthUser } from "../../redux/authSlice"; // <-- update import
+import { logoutAuthUser } from "../../redux/authSlice"; 
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -34,7 +34,7 @@ const Sidebar = () => {
         },
         onSuccess: () => {
             toast.success("Logout successful");
-            dispatch(logoutAuthUser()); // <-- clear user from slice
+            dispatch(logoutAuthUser()); 
         },
         onError: (err) => {
             console.error("Logout error:", err);

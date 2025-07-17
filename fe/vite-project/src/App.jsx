@@ -10,10 +10,11 @@ import { Toaster } from 'react-hot-toast';
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAuthUser } from "./redux/authSlice";
+import { Navigate } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();
-  const { user, loading, error } = useSelector((state) => state.auth);
+  const { user} = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchAuthUser());
@@ -23,15 +24,15 @@ function App() {
 
   return (
     <div className='flex max-w-6xl mx-auto bg-black min-h-screen'>
-      <Sidebar />
+     {user ? <Sidebar/> :null}
       <Routes>
-        <Route path='/' element={<HomePage />} />
+        <Route path='/' element={user ? <HomePage /> : <Navigate to="/login" replace />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route path='/NotificationPage' element={<NotificationPage />} />
-        <Route path='/profile/:username' element={<ProfilePage />} />
+        <Route path='/notifications' element={user ? <NotificationPage />: <Navigate to="/login" replace/>} />
+        <Route path='/profile/:username' element={user ?<ProfilePage /> :<Navigate to="/login" replace/>} />
       </Routes>
-      <RightPanel />
+     {user ? <RightPanel /> : null}
       <Toaster />
     </div>
   );
