@@ -32,7 +32,7 @@ const Posts = ({ feedType, username, userId }) => {
 					))}
 				</div>
 			)}
-			{error && <p className='text-red-500 text-center'>{error}</p>}
+			{error && <p className='text-red-500 text-center'>{error?.message || String(error)}</p>}
 		</>
 	);
 };

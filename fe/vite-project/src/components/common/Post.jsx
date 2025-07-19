@@ -12,8 +12,8 @@ const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
 	const dispatch = useDispatch();
 	const authUser = useSelector((state) => state.auth.user);
-	const isLiked = post.likes.includes(authUser._id);
-	const isMyPost = authUser._id === post.user._id;
+	const isLiked = Array.isArray(post.likes) && authUser?._id ? post.likes.includes(authUser._id) : false;
+	const isMyPost = authUser?._id && post.user?._id ? authUser._id === post.user._id : false;
 	const formattedDate = formatPostDate(post.createdAt);
 
 	const handleDeletePost = async () => {
@@ -21,7 +21,7 @@ const Post = ({ post }) => {
 			await dispatch(deletePost(post._id)).unwrap();
 			toast.success("Post deleted successfully");
 		} catch (err) {
-			toast.error(err);
+			toast.error(err?.message || String(err));
 		}
 	};
 
@@ -29,7 +29,7 @@ const Post = ({ post }) => {
 		try {
 			await dispatch(likePost(post._id)).unwrap();
 		} catch (err) {
-			toast.error(err);
+			toast.error(err?.message || String(err));
 		}
 	};
 
@@ -40,24 +40,24 @@ const Post = ({ post }) => {
 			toast.success("Comment posted");
 			setComment("");
 		} catch (err) {
-			toast.error(err);
+			toast.error(err?.message || String(err));
 		}
 	};
 
 	return (
 		<div className='flex gap-2 items-start p-4 border-b border-gray-700'>
 			<div className='avatar'>
-				<Link to={`/profile/${post.user.username}`} className='w-8 rounded-full overflow-hidden'>
-					<img src={post.user.profileImg || "/avatar-placeholder.png"} />
+				<Link to={`/profile/${post.user?.username || ""}`} className='w-8 rounded-full overflow-hidden'>
+					<img src={post.user?.profileImg || "/avatar-placeholder.png"} />
 				</Link>
 			</div>
 			<div className='flex flex-col flex-1'>
 				<div className='flex gap-2 items-center'>
-					<Link to={`/profile/${post.user.username}`} className='font-bold'>
-						{post.user.fullName}
+					<Link to={`/profile/${post.user?.username || ""}`} className='font-bold'>
+						{post.user?.fullName || "Unknown"}
 					</Link>
 					<span className='text-gray-700 flex gap-1 text-sm'>
-						<Link to={`/profile/${post.user.username}`}>@{post.user.username}</Link>
+						<Link to={`/profile/${post.user?.username || ""}`}>@{post.user?.username || "unknown"}</Link>
 						<span>·</span>
 						<span>{formattedDate}</span>
 					</span>

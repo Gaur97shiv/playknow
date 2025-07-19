@@ -1,9 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// ==========================
-// Thunks
-// ==========================
-
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
   async ({ feedType, username, userId }, thunkAPI) => {
