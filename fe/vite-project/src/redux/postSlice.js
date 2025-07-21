@@ -1,3 +1,4 @@
+// redux/postSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchPosts = createAsyncThunk(
@@ -25,6 +26,64 @@ export const fetchPosts = createAsyncThunk(
       return data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message || "Something went wrong");
+    }
+  }
+);
+
+export const createPost = createAsyncThunk(
+  'posts/createPost',
+  async ({ text, img }, thunkAPI) => {
+    try {
+      const res = await fetch('http://localhost:5000/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, img }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return thunkAPI.rejectWithValue(data.error || "Something went wrong");
+      }
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message || "Something went wrong");
+    }
+  }
+);
+
+export const editPost = createAsyncThunk(
+  'posts/editPost',
+  async ({ id, text, img }, thunkAPI) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/posts/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, img }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return thunkAPI.rejectWithValue(data.error || "Something went wrong");
+      }
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  'posts/deletePost',
+  async (postId, thunkAPI) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/posts/${postId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return thunkAPI.rejectWithValue(data.error || "Something went wrong");
+      }
+      return postId;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -67,38 +126,20 @@ export const likePost = createAsyncThunk(
   }
 );
 
-export const deletePost = createAsyncThunk(
-  'posts/deletePost',
-  async (postId, thunkAPI) => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        return thunkAPI.rejectWithValue(data.error || "Something went wrong");
-      }
-      return postId;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
-    }
-  }
-);
-
-// ==========================
-// Slice
-// ==========================
-
 const postSlice = createSlice({
   name: 'posts',
   initialState: {
     posts: [],
     loading: false,
     error: null,
+    editingPost: null,
   },
   reducers: {
     setPosts(state, action) {
       state.posts = action.payload;
+    },
+    setEditingPost(state, action) {
+      state.editingPost = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -115,33 +156,47 @@ const postSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+      .addCase(createPost.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createPost.fulfilled, (state, action) => {
+        state.loading = false;
+        state.posts.unshift(action.payload);
+      })
+      .addCase(createPost.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(editPost.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editPost.fulfilled, (state, action) => {
+        state.loading = false;
+        const updated = action.payload;
+        const index = state.posts.findIndex((p) => p._id === updated._id);
+        if (index !== -1) state.posts[index] = updated;
+      })
+      .addCase(editPost.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        state.posts = state.posts.filter((p) => p._id !== action.payload);
+      })
       .addCase(commentPost.fulfilled, (state, action) => {
         const { postId, comment } = action.payload;
         const post = state.posts.find((p) => p._id === postId);
-        if (post) {
-          post.comments.push(comment);
-        }
+        if (post) post.comments.push(comment);
       })
-
       .addCase(likePost.fulfilled, (state, action) => {
         const { postId, likes } = action.payload;
         const post = state.posts.find((p) => p._id === postId);
-        if (post) {
-          post.likes = likes;
-        }
-      })
-
-      .addCase(deletePost.fulfilled, (state, action) => {
-        state.posts = state.posts.filter((p) => p._id !== action.payload);
+        if (post) post.likes = likes;
       });
   },
 });
 
-// ==========================
-// Exports
-// ==========================
-
-export const { setPosts } = postSlice.actions;
-
+export const { setPosts, setEditingPost } = postSlice.actions;
 export default postSlice.reducer;
