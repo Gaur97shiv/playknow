@@ -1,9 +1,24 @@
-import React from 'react';
+import SignUpPage from "./pages/auth/signup/SignUpPage";
+import LoginPage from "./pages/auth/login/LoginPage";
+import { Routes, Route } from "react-router-dom";
+import Sidebar from "./components/common/Sidebar";
+import RightPanel from "./components/common/RightPanel";
+import HomePage from "./pages/home/HomePage";
+import NotificationPage from "./pages/notification/NotificationPage";
+import ProfilePage from "./pages/profile/ProfilePage";
 function App() {
   return (
-	<div class="flex items-center justify-center ">
-  <p class="text-red-500 text-center">hello world</p>
-</div>
+	<div className='flex max-w-6xl mx-auto'>
+		<Sidebar />
+			<Routes>
+				<Route path='/signup' element={<SignUpPage />} />
+				<Route path="/login" element={<LoginPage/>} />
+				<Route path='/' element={<HomePage/>}/>
+				<Route  path="/notifications" element={<NotificationPage/>} />
+				<Route path='/profile/:username' element={<ProfilePage />} />
+			</Routes>
+		<RightPanel />
+		</div>
   );
 }
 
