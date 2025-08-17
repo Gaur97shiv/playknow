@@ -12,7 +12,7 @@ export const signup = async (req, res) => {
         });
     }
 
-    const existingUser = await User.findOne({name});
+    const existingUser = await User.findOne({email});
     if (existingUser) {
         return res.status(400).json({
             message: "User already exists"
@@ -25,8 +25,8 @@ export const signup = async (req, res) => {
 
         // Create and save the user first
         const newUser = new User({
-            name, 
-            email, 
+            name,
+            email,
             password: hashedPassword
         });
         
