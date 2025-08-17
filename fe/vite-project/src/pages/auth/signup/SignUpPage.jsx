@@ -23,8 +23,8 @@ const SignUpPage = () => {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ 
-					name: formData.fullName,  
+				body: JSON.stringify({
+					name: formData.fullName,
                     email: formData.email,
                     password: formData.password}),
 			});
@@ -37,7 +37,7 @@ const SignUpPage = () => {
 			if (data.error) {
 				throw new Error(data.error);
 			}
-			return data; 
+			return data;
 		}
 		catch (error) {
 			console.error('Error during signup:', error);

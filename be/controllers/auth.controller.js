@@ -20,33 +20,18 @@ export const signup = async (req, res) => {
     }
 
     try {
-        // hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create and save the user first
         const newUser = new User({
             name,
             email,
             password: hashedPassword
         });
-        
+        generateTokenAndSetCookie(res, newUser._id);
         const savedUser = await newUser.save();
-
-        if (savedUser) {
-            // Generate token only after successful save
-            generateTokenAndSetCookie(res, savedUser._id);
-            
             return res.status(201).json({
                 message: "User created successfully",
                 savedUser
             });
-          
-        }
-        else{
-            return res.status(400).json({
-                message: "User creation failed"
-            });
-        }   
     } catch (error) {
         return res.status(500).json({
             message: "Internal server error",
@@ -107,3 +92,13 @@ export const logout = async (req, res) => {
    })
 }
 }
+
+export const getMe = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id).select("-password");
+		res.status(200).json(user);
+	} catch (error) {
+		console.log("Error in getMe controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
