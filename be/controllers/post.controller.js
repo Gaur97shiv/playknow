@@ -4,6 +4,7 @@ import {v2 as cloudinary} from "cloudinary";
 import Notification from "../models/notification.model.js";
 export const createPost= async (req, res) => {
     try{
+        console.log("req.body", req.body);
         const {content} = req.body;
         let {image} = req.body;
         const userId=req.user._id.toString();
