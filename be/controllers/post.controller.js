@@ -4,7 +4,6 @@ import {v2 as cloudinary} from "cloudinary";
 import Notification from "../models/notification.model.js";
 export const createPost= async (req, res) => {
     try{
-        console.log("req.body", req.body);
         const {content} = req.body;
         let {image} = req.body;
         const userId=req.user._id.toString();
@@ -20,15 +19,16 @@ export const createPost= async (req, res) => {
                 error: "Please provide content or image"
             });
         }
+      
         if(image){
             uploadedResponse=await cloudinary.uploader.upload(image);
             image=uploadedResponse.secure_url;
-            console.log("image",image);
+            
         }
         const newPost=new Post({
             user: userId,
             content,
-            image: image ? image.path : null
+            image
             
         })
         await newPost.save();

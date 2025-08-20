@@ -14,7 +14,6 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
 });
 
 
@@ -22,7 +21,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 ConnectMongoDb();
 
-app.use(express.json());
+app.use(express.json({limit:'5mb'}));
 app.use(cookieParser());
 app.use(cors({
   origin: 'http://localhost:3000',
