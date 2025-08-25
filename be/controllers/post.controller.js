@@ -107,7 +107,8 @@ export const commentOnPost= async (req, res) => {
 }
 export const likeOrUnlikePost= async (req, res) => {
     try{
-        const {id} = req.params;
+        const {id:postId} = req.params;
+        console.log("jai shree ram")
         const userId=req.user._id.toString();
         const post=await Post.findById(id);
         if(!post){
@@ -116,17 +117,25 @@ export const likeOrUnlikePost= async (req, res) => {
             });
         }
         if(post.likes.includes(userId)){
-            post.likes=post.likes.filter((like)=>like.toString() !== userId);
-            await User.updateOne({_id:userId},{$pull:{likedPost:id}});
+            await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
+			await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
+
+			const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString());
+			res.status(200).json(updatedLikes);
         }else{
             post.likes.push(userId);
-            const likeNotification=new Notification({
-                from: userId,
-                to: post.user,
-                type: "like",
-            });
-            await likeNotification.save();
-            await User.updateOne({_id:userId},{$push:{likedPost:id}});
+			await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
+			await post.save();
+
+			const notification = new Notification({
+				from: userId,
+				to: post.user,
+				type: "like",
+			});
+			await notification.save();
+
+			const updatedLikes = post.likes;
+			res.status(200).json(updatedLikes);
         }
         await post.save();
         return res.status(200).json({
