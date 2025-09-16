@@ -41,7 +41,7 @@ const { follow, isPending } = useFollow();
 					{!isLoading &&
 						suggestedUser?.map((user) => (
 							<Link
-								to={`/profile/${user.username}`}
+								to={`/profile/${user.name}`}
 								className='flex items-center justify-between gap-4'
 								key={user._id}
 							>
