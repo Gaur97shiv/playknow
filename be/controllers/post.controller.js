@@ -147,20 +147,29 @@ export const likeOrUnlikePost = async (req, res) => {
     }
 };
 
-export const getAllPosts= async (req, res) => {
-    try{
-        const posts=await Post.find({}).populate({path:"user", select:"-password"}).populate({path:"comments.user" ,select:"-password"}).sort({createdAt: -1});
-        return res.status(200).json({
-            message: "Posts fetched successfully",
-            posts
-        });
-    }catch(err){
-        console.error("Error in getAllPosts controller:", err);
-        return res.status(500).json({
-            error: "Internal Server Error"
-        });
-    }
-}
+export const getAllPosts = async (req, res) => {
+	try {
+		const posts = await Post.find()
+			.sort({ createdAt: -1 })
+			.populate({
+				path: "user",
+				select: "-password",
+			})
+			.populate({
+				path: "comments.user",
+				select: "-password",
+			});
+
+		if (posts.length === 0) {
+			return res.status(200).json([]);
+		}
+
+		res.status(200).json(posts);
+	} catch (error) {
+		console.log("Error in getAllPosts controller: ", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};
 export const getAllLikedPosts= async (req, res) => {
 const userId=req.user._id;
 try{
@@ -209,32 +218,50 @@ export const getFollowingPosts = async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	}
 };
-export const getAllUserPosts = async (req, res) => {
-    const userId = req.params.id;
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({
-                error: "User not found"
-            });
-        }
-        const userPosts = await Post.find({ user: userId })
-            .sort({ createdAt: -1 })
-            .populate({ path: "user", select: "-password" })
-            .populate({ path: "comments.user", select: "-password" });
-        if (!userPosts) {
-            return res.status(404).json({
-                error: "No posts found"
-            });
-        }
-        return res.status(200).json({
-            message: "User posts fetched successfully",
-            userPosts
-        });
-    } catch (err) {
-        console.error("Error in getAllUserPosts controller:", err);
-        return res.status(500).json({
-            error: "Internal Server Error"
-        });
-    }
-}
+export const getUserPosts = async (req, res) => {
+	try {
+		const { name } = req.params;
+
+		const user = await User.findOne({ name });
+		if (!user) return res.status(404).json({ error: "User not found" });
+
+		const posts = await Post.find({ user: user._id })
+			.sort({ createdAt: -1 })
+			.populate({
+				path: "user",
+				select: "-password",
+			})
+			.populate({
+				path: "comments.user",
+				select: "-password",
+			});
+
+		res.status(200).json(posts);
+	} catch (error) {
+		console.log("Error in getUserPosts controller: ", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};
+export const getLikedPosts = async (req, res) => {
+	const userId = req.params.id;
+
+	try {
+		const user = await User.findById(userId);
+		if (!user) return res.status(404).json({ error: "User not found" });
+
+		const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
+			.populate({
+				path: "user",
+				select: "-password",
+			})
+			.populate({
+				path: "comments.user",
+				select: "-password",
+			});
+
+		res.status(200).json(likedPosts);
+	} catch (error) {
+		console.log("Error in getLikedPosts controller: ", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};

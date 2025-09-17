@@ -204,7 +204,7 @@ const ProfilePage = () => {
 						</>
 					)}
 
-					<Posts />
+					<Posts feedType={feedType}  username={name} userId={user?._id}/>
 				</div>
 			</div>
 		</>
