@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "https://via.placeholder.com/150",
     },
+    	profileImg: {
+			type: String,
+			default: "",
+		},
+		coverImg: {
+			type: String,
+			default: "",
+		},
     bio: {
         type: String,
     },
@@ -31,6 +39,9 @@ const userSchema = new mongoose.Schema({
     ref:"Post",
     default:[]
    }]
-})
+},
+	{ timestamps: true }
+
+)
 const User=mongoose.model("User", userSchema);
 export default User;    

@@ -14,6 +14,8 @@ import { MdEdit } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { formatMemberSinceDate } from "../../utils/date";
+import useFollow from "../../hooks/useFollow";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -23,10 +25,12 @@ const ProfilePage = () => {
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
 	const {name}=useParams();
-	console.log("userName from params", name);
+	const {data:authUser}=useQuery({queryKey:["authUser"]})
+  
+
+	const {follow , isPending}=useFollow();
 
 
-	const isMyProfile = true;
 	
     const {data:user,isLoading ,refetch ,isRefetching}=useQuery({
 		queryKey:["userProfile"],
@@ -44,7 +48,15 @@ const ProfilePage = () => {
 
 	})
 
-	const handleImgChange = (e, state) => {
+
+	const {updateProfile, isUpdatingProfile } = useUpdateUserProfile();
+
+
+     const isMyProfile = authUser?._id === user?._id;
+	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
+	const amIfollowing=authUser?.following.includes(user?._id);
+
+const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
 		if (file) {
 			const reader = new FileReader();
@@ -56,7 +68,6 @@ const ProfilePage = () => {
 		}
 	};
 
-	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
 	useEffect(() => {
 		refetch();
 	}, [name ,refetch]);
@@ -123,29 +134,35 @@ const ProfilePage = () => {
 								</div>
 							</div>
 							<div className='flex justify-end px-4 mt-5'>
-								{isMyProfile && <EditProfileModal />}
+								{isMyProfile && <EditProfileModal authUser={authUser}/>}
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
-										onClick={() => alert("Followed successfully")}
+										onClick={follow(user?._id)}
 									>
-										Follow
+										{isPending ? "Following..." : "Follow"}
+										{!isPending && amIfollowing && "unFollow"}
+										{!isPending && !amIfollowing && "Follow"}
 									</button>
 								)}
 								{(coverImg || profileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
+										onClick={async () => {
+											await updateProfile({ coverImg, profileImg });
+											setProfileImg(null);
+											setCoverImg(null);
+										}}
 									>
-										Update
+										{isUpdatingProfile ? "Updating..." : "Update"}
 									</button>
 								)}
 							</div>
 
 							<div className='flex flex-col gap-4 mt-14 px-4'>
 								<div className='flex flex-col'>
-									<span className='font-bold text-lg'>{user?.fullName}</span>
-									<span className='text-sm text-slate-500'>@{user?.username}</span>
+									<span className='font-bold text-lg'>{user?.name}</span>
+									<span className='text-sm text-slate-500'>@{user?.name}</span>
 									<span className='text-sm my-1'>{user?.bio}</span>
 								</div>
 
