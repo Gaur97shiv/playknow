@@ -38,7 +38,12 @@ const userSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:"Post",
     default:[]
-   }]
+   }],
+   balance: {
+    type: Number,
+    default: 100, // Initial balance for all users
+    min: 0
+   }
 },
 	{ timestamps: true }
 

@@ -33,11 +33,19 @@ const { mutate: createPost ,isPending } = useMutation({
       throw error;
     }
   },
-  onSuccess:() =>{
+  onSuccess:(data) =>{
 	setText("");
 	setImg(null);
    toast.success("Post created successfully");
    queryClient.invalidateQueries({ queryKey: ['posts'] });
+   queryClient.invalidateQueries({ queryKey: ['authUser'] });
+   queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+   queryClient.invalidateQueries({ queryKey: ['dailyPool'] });
+   
+   // Show balance update if available
+   if (data.balance !== undefined) {
+     toast.success(`Remaining balance: ${data.balance} coins`);
+   }
   }
 });
 

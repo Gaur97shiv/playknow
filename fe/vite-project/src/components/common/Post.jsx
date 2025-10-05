@@ -34,9 +34,8 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 				},
 				body: JSON.stringify({ text: comment }),
 			});
-			if (!res.ok) throw new Error("Failed to comment on post");
 			const data = await res.json();
-			if (data.error) throw new Error(data.error);
+			if (!res.ok) throw new Error(data.error || "Failed to comment on post");
 			
 			return data;
 		} catch (error) {
@@ -44,10 +43,16 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 			throw error;
 		}
 	},
-	onSuccess: () => {
+	onSuccess: (data) => {
 		toast.success("Comment posted successfully");
 		queryClient.invalidateQueries({ queryKey: ["posts"] });
+		queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		setComment("");
+		
+		// Show balance update if available
+		if (data.balance !== undefined) {
+			toast.success(`Remaining balance: ${data.balance} coins`);
+		}
 	},
 	onError: (error) => {
 		toast.error(error.message);
@@ -83,32 +88,44 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 	const {mutate:likePost,isPending:isLiking} = useMutation({
 		mutationFn: async () =>{
 			try {
-				
 				const res = await fetch(`/api/post/likeOrUnlike/${post._id}`, {
 					method: "POST",
 				});
+				const data = await res.json();
 				if (!res.ok) {
-					console.error("Error liking post:", res.statusText);
 					throw new Error(data.error || "Something went wrong");
 				}
-				const data = await res.json();
 				return data;
 			} catch (error) {
 			  throw error;
 			}
 		},
-		onSuccess: (updatedLikes) => {
-			toast.success("Post liked successfully");
-			//queryClient.invalidateQueries({queryKey: ["posts"]});
-
-			queryClient.setQueryData(["posts"], (oldData) => {
-				return oldData.map((p) => {
-					if (p._id === post._id) {
-						return { ...p, likes: updatedLikes };
-					}
-					return p;
+		onSuccess: (data) => {
+			// Handle both like and unlike responses
+			if (Array.isArray(data)) {
+				// Unlike response (just array of likes)
+				queryClient.setQueryData(["posts"], (oldData) => {
+					return oldData.map((p) => {
+						if (p._id === post._id) {
+							return { ...p, likes: data };
+						}
+						return p;
+					});
 				});
-			});
+				toast.success("Post unliked successfully");
+			} else if (data.likes && data.balance) {
+				// Like response (object with likes, balance, post)
+				queryClient.setQueryData(["posts"], (oldData) => {
+					return oldData.map((p) => {
+						if (p._id === post._id) {
+							return { ...p, likes: data.likes, total_coin_on_post: data.post.total_coin_on_post };
+						}
+						return p;
+					});
+				});
+				queryClient.invalidateQueries({ queryKey: ["authUser"] });
+				toast.success(`Post liked! Remaining balance: ${data.balance} coins`);
+			}
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -250,6 +267,16 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 								>
 									{post.likes.length}
 								</span>
+								
+								{/* Post Pool Coins Display */}
+								{post.total_coin_on_post > 0 && (
+									<div className='flex items-center gap-1 ml-2'>
+										<span className='text-xs text-yellow-400'>💰</span>
+										<span className='text-xs text-yellow-400 font-semibold'>
+											{post.total_coin_on_post}
+										</span>
+									</div>
+								)}
 							</div>
 						</div>
 						<div className='flex w-1/3 justify-end gap-2 items-center'>

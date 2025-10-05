@@ -2,18 +2,27 @@ import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 import {v2 as cloudinary} from "cloudinary";
 import Notification from "../models/notification.model.js";
+import { 
+    checkUserBalance, 
+    deductUserBalance, 
+    addToDailyPool,
+    addToPostPool
+} from "../lib/utils/balanceUtils.js";
 export const createPost= async (req, res) => {
     try{
         const {content} = req.body;
         let {image} = req.body;
         const userId=req.user._id.toString();
-        console.log("userId",userId);
-        const user=await User.findById(userId);
-        if(!user){
-            return res.status(404).json({
-                error: "User not found"
+        const POSTING_FEE = 20; // 20 points for posting
+        
+        // Check if user has sufficient balance for posting
+        const balanceCheck = await checkUserBalance(userId, POSTING_FEE);
+        if (!balanceCheck.success) {
+            return res.status(400).json({
+                error: balanceCheck.error
             });
         }
+        
         if(!content && !image){
             return res.status(400).json({
                 error: "Please provide content or image"
@@ -21,20 +30,40 @@ export const createPost= async (req, res) => {
         }
       
         if(image){
-            uploadedResponse=await cloudinary.uploader.upload(image);
+            const uploadedResponse=await cloudinary.uploader.upload(image);
             image=uploadedResponse.secure_url;
-            
         }
+        
+        // Deduct posting fee from user balance
+        const deductionResult = await deductUserBalance(userId, POSTING_FEE);
+        if (!deductionResult.success) {
+            return res.status(500).json({
+                error: deductionResult.error
+            });
+        }
+        
+        // Add coins to daily pool
+        const poolResult = await addToDailyPool(POSTING_FEE);
+        if (!poolResult.success) {
+            // If pool update fails, refund the user
+            await deductUserBalance(userId, -POSTING_FEE); // Add back the coins
+            return res.status(500).json({
+                error: poolResult.error
+            });
+        }
+        
         const newPost=new Post({
             user: userId,
             content,
             image
-            
         })
         await newPost.save();
+        
         return res.status(201).json({
             message: "Post created successfully",
-            post: newPost
+            post: newPost,
+            balance: deductionResult.updatedUser.balance,
+            dailyPool: poolResult.dailyPool
         });
     }catch(err){
         console.error("Error in createPost controller:", err);
@@ -78,6 +107,8 @@ export const commentOnPost= async (req, res) => {
         const {id} = req.params;
         const {text} = req.body;
         const userId=req.user._id.toString();
+        const COMMENT_FEE = 5; // 5 points for commenting
+        
         const post=await Post.findById(id);
         if(!post){
             return res.status(404).json({
@@ -89,14 +120,43 @@ export const commentOnPost= async (req, res) => {
                 error: "Please provide a comment"
             });
         }
+        
+        // Check if user has sufficient balance for commenting
+        const balanceCheck = await checkUserBalance(userId, COMMENT_FEE);
+        if (!balanceCheck.success) {
+            return res.status(400).json({
+                error: balanceCheck.error
+            });
+        }
+        
+        // Deduct commenting fee from user balance
+        const deductionResult = await deductUserBalance(userId, COMMENT_FEE);
+        if (!deductionResult.success) {
+            return res.status(500).json({
+                error: deductionResult.error
+            });
+        }
+        
+        // Add coins to post pool
+        const postPoolResult = await addToPostPool(id, COMMENT_FEE);
+        if (!postPoolResult.success) {
+            // If post pool update fails, refund the user
+            await deductUserBalance(userId, -COMMENT_FEE); // Add back the coins
+            return res.status(500).json({
+                error: postPoolResult.error
+            });
+        }
+        
         post.comments.push({
             user: userId,
             text
         });
         await post.save();
+        
         return res.status(200).json({
             message: "Comment added successfully",
-            post
+            post: postPoolResult.post,
+            balance: deductionResult.updatedUser.balance
         });
     }catch(err){
         console.error("Error in commentOnPost controller:", err);
@@ -109,6 +169,7 @@ export const likeOrUnlikePost = async (req, res) => {
     try {
         const { id: postId } = req.params;
         const userId = req.user._id;
+        const LIKE_FEE = 2; // 2 points for liking
 
         const post = await Post.findById(postId);
         if (!post) {
@@ -116,7 +177,7 @@ export const likeOrUnlikePost = async (req, res) => {
         }
 
         if (post.likes.includes(userId)) {
-            // Unlike
+            // Unlike - no fee for unliking
             await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
             await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
 
@@ -125,7 +186,32 @@ export const likeOrUnlikePost = async (req, res) => {
             );
             return res.status(200).json(updatedLikes);
         } else {
-            // Like
+            // Like - check balance and deduct fee
+            const balanceCheck = await checkUserBalance(userId, LIKE_FEE);
+            if (!balanceCheck.success) {
+                return res.status(400).json({
+                    error: balanceCheck.error
+                });
+            }
+
+            // Deduct liking fee from user balance
+            const deductionResult = await deductUserBalance(userId, LIKE_FEE);
+            if (!deductionResult.success) {
+                return res.status(500).json({
+                    error: deductionResult.error
+                });
+            }
+
+            // Add coins to post pool
+            const postPoolResult = await addToPostPool(postId, LIKE_FEE);
+            if (!postPoolResult.success) {
+                // If post pool update fails, refund the user
+                await deductUserBalance(userId, -LIKE_FEE); // Add back the coins
+                return res.status(500).json({
+                    error: postPoolResult.error
+                });
+            }
+
             post.likes.push(userId);
             await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
             await post.save();
@@ -138,7 +224,11 @@ export const likeOrUnlikePost = async (req, res) => {
             await notification.save();
 
             const updatedLikes = post.likes;
-            return res.status(200).json(updatedLikes);
+            return res.status(200).json({
+                likes: updatedLikes,
+                balance: deductionResult.updatedUser.balance,
+                post: postPoolResult.post
+            });
         }
 
     } catch (err) {
@@ -164,7 +254,10 @@ export const getAllPosts = async (req, res) => {
 			return res.status(200).json([]);
 		}
 
-		res.status(200).json(posts);
+		// Shuffle posts using Math.random for random ordering
+		const shuffledPosts = posts.sort(() => Math.random() - 0.5);
+
+		res.status(200).json(shuffledPosts);
 	} catch (error) {
 		console.log("Error in getAllPosts controller: ", error);
 		res.status(500).json({ error: "Internal server error" });
@@ -212,7 +305,10 @@ export const getFollowingPosts = async (req, res) => {
 				select: "-password",
 			});
 
-		res.status(200).json(feedPosts);
+		// Shuffle posts using Math.random for random ordering
+		const shuffledPosts = feedPosts.sort(() => Math.random() - 0.5);
+
+		res.status(200).json(shuffledPosts);
 	} catch (error) {
 		console.log("Error in getFollowingPosts controller: ", error);
 		res.status(500).json({ error: "Internal server error" });

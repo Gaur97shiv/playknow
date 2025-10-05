@@ -11,9 +11,6 @@ const postSchema = new mongoose.Schema({
     content: {
         type: String,
     },
-    image: {
-        type: String,
-    },
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
@@ -29,7 +26,11 @@ const postSchema = new mongoose.Schema({
             required: true
         }
 
-    }]
+    }],
+    total_coin_on_post: {
+        type: Number,
+        default: 0
+    }
 }, { timestamps: true })
 
 const Post = mongoose.model("Post", postSchema);

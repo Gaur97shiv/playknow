@@ -7,9 +7,14 @@ import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import useDailyPool from "../../hooks/useDailyPool";
+import useUserBalance from "../../hooks/useUserBalance";
 
 const Sidebar = () => {
 	const queryClient = useQueryClient();
+	const { dailyPool, isLoading: poolLoading } = useDailyPool();
+	const { userBalance, isLoading: balanceLoading } = useUserBalance();
+	
 	const { mutate: logout } = useMutation({
 		mutationFn: async () => {
 			try {
@@ -42,6 +47,40 @@ const Sidebar = () => {
 					<XSvg className='px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900' />
 				</Link>
 				<ul className='flex flex-col gap-3 mt-4'>
+					{/* Daily Pool Display */}
+					{!poolLoading && dailyPool && (
+						<li className='flex justify-center md:justify-start'>
+							<div className='flex flex-col items-center md:items-start gap-1 px-2 py-1'>
+								<div className='flex items-center gap-2'>
+									<span className='text-xs text-yellow-400'>💰</span>
+									<span className='text-xs text-yellow-400 font-bold'>
+										Daily Pool: {dailyPool.total_pool_coins || 0}
+									</span>
+								</div>
+								<span className='text-xs text-gray-500 hidden md:block'>
+									{dailyPool.posts_count || 0} posts today
+								</span>
+							</div>
+						</li>
+					)}
+					
+					{/* User Balance Display */}
+					{!balanceLoading && userBalance && (
+						<li className='flex justify-center md:justify-start'>
+							<div className='flex flex-col items-center md:items-start gap-1 px-2 py-1'>
+								<div className='flex items-center gap-2'>
+									<span className='text-xs text-green-400'>🪙</span>
+									<span className='text-xs text-green-400 font-bold'>
+										My Balance: {userBalance.balance || 0}
+									</span>
+								</div>
+								<span className='text-xs text-gray-500 hidden md:block'>
+									@{userBalance.userName}
+								</span>
+							</div>
+						</li>
+					)}
+					
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to='/'
