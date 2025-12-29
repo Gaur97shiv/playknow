@@ -7,6 +7,9 @@
     "dev": "nodemon be/server.js",
     "start": "node be/server.js"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Gaur97shiv/playknow.git"
