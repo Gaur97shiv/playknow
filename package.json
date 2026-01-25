@@ -2,7 +2,7 @@
   "name": "playknow",
   "version": "1.0.0",
   "description": "",
-  "main": " be/server.js",
+  "main": "be/server.js",
   "scripts": {
     "dev": "nodemon be/server.js",
     "start": "node be/server.js"
