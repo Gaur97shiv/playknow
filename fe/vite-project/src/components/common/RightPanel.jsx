@@ -44,7 +44,7 @@ const { follow, isPending } = useFollow();
 						suggestedUser?.map((user) => (
 							<Link
 								to={`/profile/${user.name}`}
-								className='flex items-center justify-between gap-3 p-2 rounded hover:bg-cream-dark transition-colors'
+								className='flex items-center justify-between gap-3 p-2 rounded hover:bg-sand/50 transition-colors'
 								key={user._id}
 							>
 								<div className='flex gap-3 items-center'>
@@ -54,10 +54,10 @@ const { follow, isPending } = useFollow();
 										</div>
 									</div>
 									<div className='flex flex-col'>
-										<span className='font-bold text-coffee text-sm truncate w-24'>
+										<span className='font-bold text-bark text-sm truncate w-24'>
 											{user.name}
 										</span>
-										<span className='text-xs text-vintage-brown'>@{user.name}</span>
+										<span className='text-xs text-soil'>@{user.name}</span>
 									</div>
 								</div>
 								<div>
@@ -78,13 +78,13 @@ const { follow, isPending } = useFollow();
 				<hr className='vintage-divider my-4' />
 				
 				<div className='text-center'>
-					<p className='text-xs text-vintage-brown' style={{fontFamily: 'Arial, sans-serif'}}>
-						You are visitor #<span className='text-vintage-orange font-bold'>000,042</span>
+					<p className='text-xs text-soil' style={{fontFamily: 'Arial, sans-serif'}}>
+						You are visitor #<span className='text-rust font-bold'>000,042</span>
 					</p>
 					<div className='flex justify-center gap-1 mt-2'>
-						<div className='w-2 h-2 bg-vintage-orange rounded-full'></div>
-						<div className='w-2 h-2 bg-vintage-green rounded-full'></div>
-						<div className='w-2 h-2 bg-vintage-blue rounded-full'></div>
+						<div className='w-2 h-2 bg-rust rounded-full'></div>
+						<div className='w-2 h-2 bg-moss rounded-full'></div>
+						<div className='w-2 h-2 bg-clay rounded-full'></div>
 					</div>
 				</div>
 			</div>

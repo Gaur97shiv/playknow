@@ -66,7 +66,7 @@ const { mutate: createPost ,isPending } = useMutation({
 	};
 
 	return (
-		<div className='vintage-card-inset flex p-4 items-start gap-4 border-b-3 border-vintage-tan'>
+		<div className='vintage-card-inset flex p-4 items-start gap-4 border-b-4 border-soil'>
 			<div className='avatar'>
 				<div className='w-10 rounded-full avatar-vintage overflow-hidden'>
 					<img src={authUser.profileImg || "/avatar-placeholder.png"} />
@@ -74,7 +74,7 @@ const { mutate: createPost ,isPending } = useMutation({
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
 				<textarea
-					className='textarea w-full p-2 text-lg resize-none bg-paper border-2 border-inset border-vintage-tan text-coffee placeholder-vintage-brown'
+					className='textarea w-full p-2 text-lg resize-none text-bark placeholder-soil'
 					placeholder='What is on your mind?'
 					value={text}
 					onChange={(e) => setText(e.target.value)}
@@ -82,23 +82,23 @@ const { mutate: createPost ,isPending } = useMutation({
 				{img && (
 					<div className='relative w-72 mx-auto'>
 						<IoCloseSharp
-							className='absolute top-2 right-2 text-white bg-vintage-red rounded-full w-6 h-6 cursor-pointer p-1 hover:bg-vintage-orange transition-colors'
+							className='absolute top-2 right-2 text-parchment bg-rust rounded-full w-6 h-6 cursor-pointer p-1 hover:bg-terracotta transition-colors'
 							onClick={() => {
 								setImg(null);
 								imgRef.current.value = null;
 							}}
 						/>
-						<img src={img} className='w-full mx-auto h-72 object-contain rounded border-2 border-vintage-tan' />
+						<img src={img} className='w-full mx-auto h-72 object-contain rounded border-4 border-soil' />
 					</div>
 				)}
 
-				<div className='flex justify-between border-t-2 py-3 border-vintage-tan'>
+				<div className='flex justify-between border-t-4 py-3 border-soil'>
 					<div className='flex gap-3 items-center'>
 						<CiImageOn
-							className='w-6 h-6 cursor-pointer text-vintage-blue hover:text-vintage-orange transition-colors'
+							className='w-6 h-6 cursor-pointer text-sepia hover:text-rust transition-colors'
 							onClick={() => imgRef.current.click()}
 						/>
-						<BsEmojiSmileFill className='w-5 h-5 cursor-pointer text-vintage-orange hover:text-vintage-green transition-colors' />
+						<BsEmojiSmileFill className='w-5 h-5 cursor-pointer text-rust hover:text-terracotta transition-colors' />
 					</div>
 					<input type='file' accept='image/*' hidden ref={imgRef} onChange={handleImgChange} />
 					<button className='vintage-btn-primary rounded text-sm px-5 py-2'>

@@ -68,17 +68,17 @@ const LoginPage = () => {
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen px-4'>
 			<div className='flex-1 hidden lg:flex items-center justify-center'>
-				<div className='decorative-border p-6 bg-cream'>
+				<div className='decorative-border p-6'>
 					<XSvg className='lg:w-48 h-48' />
 					<div className='text-center mt-4'>
-						<h2 className='text-2xl font-bold text-coffee' style={{fontFamily: 'Times New Roman, serif'}}>PlayKnow</h2>
-						<p className='text-vintage-brown text-sm mt-1'>Engage & Earn</p>
+						<h2 className='text-2xl font-bold text-bark' style={{fontFamily: 'Times New Roman, serif'}}>PlayKnow</h2>
+						<p className='text-soil text-sm mt-1'>Engage & Earn</p>
 					</div>
 				</div>
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<div className='vintage-card p-8 min-w-[340px]'>
-					<div className='vintage-header -mx-8 -mt-8 mb-6 px-6 py-4 rounded-t'>
+					<div className='vintage-header -mx-8 -mt-8 mb-6 px-6 py-4'>
 						<h1 className='text-2xl font-bold text-center'>Welcome Back!</h1>
 					</div>
 					
@@ -86,11 +86,11 @@ const LoginPage = () => {
 					
 					<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
 						<div>
-							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+							<label className='block text-bark text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
 								Username:
 							</label>
 							<div className='vintage-input rounded flex items-center gap-2'>
-								<MdOutlineMail className='text-vintage-brown' />
+								<MdOutlineMail className='text-soil' />
 								<input
 									type='text'
 									className='grow bg-transparent border-none outline-none'
@@ -103,11 +103,11 @@ const LoginPage = () => {
 						</div>
 
 						<div>
-							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+							<label className='block text-bark text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
 								Password:
 							</label>
 							<div className='vintage-input rounded flex items-center gap-2'>
-								<MdPassword className='text-vintage-brown' />
+								<MdPassword className='text-soil' />
 								<input
 									type='password'
 									className='grow bg-transparent border-none outline-none'
@@ -122,25 +122,25 @@ const LoginPage = () => {
 						<button className='vintage-btn-primary rounded mt-2'>
 							{isPending ? "Signing In..." : "Sign In"}
 						</button>
-						{isError && <p className='text-vintage-red text-center text-sm'>Something went wrong</p>}
+						{isError && <p className='text-rust text-center text-sm'>Something went wrong</p>}
 					</form>
 				</div>
 				
-				<div className='vintage-card-raised p-4 mt-4 text-center'>
-					<p className='text-coffee mb-2'>{"Don't"} have an account?</p>
+				<div className='vintage-card-raised p-4 mt-4 text-center rounded'>
+					<p className='text-bark mb-2'>{"Don't"} have an account?</p>
 					<Link to='/signup'>
 						<button className='vintage-btn-secondary rounded px-6 py-2'>Create Account</button>
 					</Link>
 				</div>
 				
 				<div className='mt-6 text-center'>
-					<p className='text-vintage-brown text-xs' style={{fontFamily: 'Arial, sans-serif'}}>
-						Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0
+					<p className='text-parchment text-xs' style={{fontFamily: 'Arial, sans-serif'}}>
+						Est. 1999 - Best viewed at 800x600
 					</p>
 					<div className='flex justify-center gap-1 mt-2'>
-						<div className='w-2 h-2 bg-vintage-orange rounded-full'></div>
-						<div className='w-2 h-2 bg-vintage-green rounded-full'></div>
-						<div className='w-2 h-2 bg-vintage-blue rounded-full'></div>
+						<div className='w-2 h-2 bg-rust rounded-full'></div>
+						<div className='w-2 h-2 bg-moss rounded-full'></div>
+						<div className='w-2 h-2 bg-clay rounded-full'></div>
 					</div>
 				</div>
 			</div>

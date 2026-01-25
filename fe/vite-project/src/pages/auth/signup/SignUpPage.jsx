@@ -68,17 +68,17 @@ const SignUpPage = () => {
 	return (
 		<div className='max-w-screen-2xl mx-auto flex h-screen px-6'>
 			<div className='flex-1 hidden lg:flex items-center justify-center'>
-				<div className='decorative-border p-6 bg-cream'>
+				<div className='decorative-border p-6'>
 					<XSvg className='lg:w-52 h-52' />
 					<div className='text-center mt-4'>
-						<h2 className='text-2xl font-bold text-coffee' style={{fontFamily: 'Times New Roman, serif'}}>Join PlayKnow</h2>
-						<p className='text-vintage-brown text-sm mt-1'>Your Voice Has Value</p>
+						<h2 className='text-2xl font-bold text-bark' style={{fontFamily: 'Times New Roman, serif'}}>Join PlayKnow</h2>
+						<p className='text-soil text-sm mt-1'>Your Voice Has Value</p>
 					</div>
 				</div>
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<div className='vintage-card p-8 w-full max-w-md'>
-					<div className='vintage-header -mx-8 -mt-8 mb-6 px-6 py-4 rounded-t'>
+					<div className='vintage-header -mx-8 -mt-8 mb-6 px-6 py-4'>
 						<h1 className='text-2xl font-bold text-center'>Create Your Account</h1>
 					</div>
 					
@@ -86,11 +86,11 @@ const SignUpPage = () => {
 					
 					<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
 						<div>
-							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+							<label className='block text-bark text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
 								Email Address:
 							</label>
 							<div className='vintage-input rounded flex items-center gap-2'>
-								<MdOutlineMail className='text-vintage-brown' />
+								<MdOutlineMail className='text-soil' />
 								<input
 									type='email'
 									className='grow bg-transparent border-none outline-none'
@@ -103,11 +103,11 @@ const SignUpPage = () => {
 						</div>
 						
 						<div>
-							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+							<label className='block text-bark text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
 								Full Name:
 							</label>
 							<div className='vintage-input rounded flex items-center gap-2'>
-								<MdDriveFileRenameOutline className='text-vintage-brown' />
+								<MdDriveFileRenameOutline className='text-soil' />
 								<input
 									type='text'
 									className='grow bg-transparent border-none outline-none'
@@ -120,11 +120,11 @@ const SignUpPage = () => {
 						</div>
 						
 						<div>
-							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+							<label className='block text-bark text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
 								Password:
 							</label>
 							<div className='vintage-input rounded flex items-center gap-2'>
-								<MdPassword className='text-vintage-brown' />
+								<MdPassword className='text-soil' />
 								<input
 									type='password'
 									className='grow bg-transparent border-none outline-none'
@@ -139,19 +139,19 @@ const SignUpPage = () => {
 						<button className='vintage-btn-primary rounded mt-2'>
 							{isPending ? "Creating Account..." : "Register Now"}
 						</button>
-						{isError && <p className='text-vintage-red text-center text-sm'>Something went wrong</p>}
+						{isError && <p className='text-rust text-center text-sm'>Something went wrong</p>}
 					</form>
 				</div>
 				
-				<div className='vintage-card-raised p-4 mt-4 text-center'>
-					<p className='text-coffee mb-2'>Already a member?</p>
+				<div className='vintage-card-raised p-4 mt-4 text-center rounded'>
+					<p className='text-bark mb-2'>Already a member?</p>
 					<Link to='/login'>
 						<button className='vintage-btn-secondary rounded px-6 py-2'>Sign In</button>
 					</Link>
 				</div>
 				
 				<div className='mt-6 text-center'>
-					<div className='marquee-style px-4 py-1 rounded'>
+					<div className='marquee-style px-4 py-2 rounded'>
 						*** FREE Registration *** Earn Coins for Every Post! ***
 					</div>
 				</div>

@@ -8,11 +8,11 @@ const HomePage = () => {
 
 	return (
 		<>
-			<div className='flex-[4_4_0] mr-auto border-r-3 border-vintage-tan min-h-screen bg-cream'>
-				<div className='flex w-full border-b-3 border-vintage-tan bg-cream-dark'>
+			<div className='flex-[4_4_0] mr-auto border-r-4 border-soil min-h-screen bg-sand'>
+				<div className='flex w-full border-b-4 border-soil bg-wheat'>
 					<div
 						className={`tab-vintage flex justify-center flex-1 p-4 cursor-pointer relative text-sm ${
-							feedType === "forYou" ? "active bg-cream" : ""
+							feedType === "forYou" ? "active" : ""
 						}`}
 						onClick={() => setFeedType("forYou")}
 					>
@@ -20,7 +20,7 @@ const HomePage = () => {
 					</div>
 					<div
 						className={`tab-vintage flex justify-center flex-1 p-4 cursor-pointer relative text-sm ${
-							feedType === "following" ? "active bg-cream" : ""
+							feedType === "following" ? "active" : ""
 						}`}
 						onClick={() => setFeedType("following")}
 					>

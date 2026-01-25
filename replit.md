@@ -19,8 +19,8 @@ PlayKnow is a paid comment app platform where meaningful user engagement is ince
 - **Storage**: Cloudinary for image uploads
 
 ## UI Theme
-The app features a **Classic 90s Vintage** design with light/creamy colors:
-- **Colors**: Cream (#FFF8E7), vintage tan (#D4B896), coffee brown (#6F4E37), vintage orange (#E07020), vintage green (#2E6B4D)
+The app features a **Classic 90s Vintage** design with earthy soil/mud colors:
+- **Colors**: Soil (#5C4033), mud (#6B4423), clay (#8B5A2B), sand (#C4A77D), rust (#B7410E), moss (#556B2F), bark (#3D2914)
 - **Fonts**: Times New Roman (classic), Arial (system)
 - **Effects**: Beveled borders, inset inputs, ridge borders, 3D button shadows, double borders
 
@@ -45,4 +45,4 @@ The backend requires these environment variables:
 - `/api/pool` - Reward pool management
 
 ## Recent Changes
-- **Jan 25, 2026**: Redesigned UI with classic 90s vintage light/creamy theme
+- **Jan 25, 2026**: Redesigned UI with classic 90s vintage earthy/soil/mud theme

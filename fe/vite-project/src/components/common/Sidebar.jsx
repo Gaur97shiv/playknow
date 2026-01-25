@@ -54,15 +54,15 @@ const Sidebar = () => {
 								<div className='flex items-center gap-2'>
 									<span className='text-lg'>💰</span>
 									<div className='flex flex-col'>
-										<span className='text-xs text-vintage-brown font-bold' style={{fontFamily: 'Arial, sans-serif'}}>
+										<span className='text-xs text-bark font-bold' style={{fontFamily: 'Arial, sans-serif'}}>
 											Daily Pool
 										</span>
-										<span className='text-sm text-vintage-orange font-bold'>
+										<span className='text-sm text-rust font-bold'>
 											{dailyPool.total_pool_coins || 0} coins
 										</span>
 									</div>
 								</div>
-								<span className='text-xs text-coffee hidden md:block mt-1'>
+								<span className='text-xs text-soil hidden md:block mt-1'>
 									{dailyPool.posts_count || 0} posts today
 								</span>
 							</div>
@@ -75,15 +75,15 @@ const Sidebar = () => {
 								<div className='flex items-center gap-2'>
 									<span className='text-lg'>🪙</span>
 									<div className='flex flex-col'>
-										<span className='text-xs text-vintage-green font-bold' style={{fontFamily: 'Arial, sans-serif'}}>
+										<span className='text-xs text-parchment font-bold' style={{fontFamily: 'Arial, sans-serif'}}>
 											My Balance
 										</span>
-										<span className='text-sm text-vintage-green font-bold'>
+										<span className='text-sm text-parchment font-bold'>
 											{userBalance.balance || 0} coins
 										</span>
 									</div>
 								</div>
-								<span className='text-xs text-coffee hidden md:block mt-1'>
+								<span className='text-xs text-parchment/70 hidden md:block mt-1'>
 									@{userBalance.userName}
 								</span>
 							</div>
@@ -133,11 +133,11 @@ const Sidebar = () => {
 							</div>
 							<div className='flex justify-between flex-1 items-center'>
 								<div className='hidden md:block'>
-									<p className='text-coffee font-bold text-sm w-20 truncate'>{authUser?.name}</p>
-									<p className='text-vintage-brown text-xs'>@{authUser?.name}</p>
+									<p className='text-bark font-bold text-sm w-20 truncate'>{authUser?.name}</p>
+									<p className='text-soil text-xs'>@{authUser?.name}</p>
 								</div>
 								<BiLogOut
-									className='w-5 h-5 text-vintage-red hover:text-vintage-orange cursor-pointer transition-colors'
+									className='w-5 h-5 text-rust hover:text-terracotta cursor-pointer transition-colors'
 									onClick={(e) => {
 										e.preventDefault();
 										logout();

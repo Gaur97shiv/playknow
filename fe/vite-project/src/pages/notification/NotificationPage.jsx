@@ -47,7 +47,7 @@ const NotificationPage = () => {
 
 	return (
 		<>
-			<div className='flex-[4_4_0] border-l-3 border-r-3 border-vintage-tan min-h-screen bg-cream'>
+			<div className='flex-[4_4_0] border-l-4 border-r-4 border-soil min-h-screen bg-sand'>
 				<div className='vintage-header flex justify-between items-center p-4'>
 					<div className='flex items-center gap-2'>
 						<span className='text-xl'>📬</span>
@@ -62,7 +62,7 @@ const NotificationPage = () => {
 							className='dropdown-content z-[1] menu p-2 shadow-lg vintage-card rounded w-56'
 						>
 							<li>
-								<a onClick={deleteNotifications} className='text-coffee hover:text-vintage-red transition-colors'>
+								<a onClick={deleteNotifications} className='text-bark hover:text-rust transition-colors'>
 									Delete all notifications
 								</a>
 							</li>
@@ -77,21 +77,21 @@ const NotificationPage = () => {
 				{notifications?.length === 0 && (
 					<div className='text-center p-8 vintage-card-inset m-4 rounded'>
 						<span className='text-4xl mb-4 block'>📭</span>
-						<p className='text-coffee font-bold'>No notifications yet</p>
-						<p className='text-vintage-brown text-sm mt-1'>Check back later!</p>
+						<p className='text-bark font-bold'>No notifications yet</p>
+						<p className='text-soil text-sm mt-1'>Check back later!</p>
 					</div>
 				)}
 				{notifications?.map((notification) => (
 					<div className='post-card' key={notification._id}>
 						<div className='flex gap-3 p-4 items-center'>
 							{notification.type === "follow" && (
-								<div className='p-2 rounded-full bg-vintage-green/20'>
-									<FaUser className='w-5 h-5 text-vintage-green' />
+								<div className='p-2 rounded-full bg-moss/30'>
+									<FaUser className='w-5 h-5 text-moss' />
 								</div>
 							)}
 							{notification.type === "like" && (
-								<div className='p-2 rounded-full bg-vintage-red/20'>
-									<FaHeart className='w-5 h-5 text-vintage-red' />
+								<div className='p-2 rounded-full bg-rust/30'>
+									<FaHeart className='w-5 h-5 text-rust' />
 								</div>
 							)}
 							<Link to={`/profile/${notification.from.username}`} className='flex items-center gap-3 flex-1'>
@@ -101,8 +101,8 @@ const NotificationPage = () => {
 									</div>
 								</div>
 								<div className='flex flex-col'>
-									<span className='font-bold text-coffee'>@{notification.from.username}</span>
-									<span className='text-vintage-brown text-sm'>
+									<span className='font-bold text-bark'>@{notification.from.username}</span>
+									<span className='text-soil text-sm'>
 										{notification.type === "follow" ? "followed you" : "liked your post"}
 									</span>
 								</div>
