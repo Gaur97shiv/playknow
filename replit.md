@@ -18,6 +18,12 @@ PlayKnow is a paid comment app platform where meaningful user engagement is ince
 - **Backend**: Express.js, MongoDB (Mongoose), JWT authentication
 - **Storage**: Cloudinary for image uploads
 
+## UI Theme
+The app features a unique **Vintage 90s Indian + Futuristic** design:
+- **Colors**: Indian tricolor (saffron #FF9933, white, india-green #138808), royal gold #FFD700, neon cyan #00FFFF, neon pink #FF1493
+- **Fonts**: Orbitron (futuristic), Playfair Display (classic), Press Start 2P (retro)
+- **Effects**: Cyber grid backgrounds, scanline overlays, neon glows, decorative corner frames
+
 ## Environment Variables Required
 The backend requires these environment variables:
 - `MONGODB_URI` - MongoDB connection string
@@ -37,3 +43,6 @@ The backend requires these environment variables:
 - `/api/post` - Post CRUD operations
 - `/api/notifications` - User notifications
 - `/api/pool` - Reward pool management
+
+## Recent Changes
+- **Jan 25, 2026**: Implemented vintage 90s Indian + futuristic UI theme across all components
