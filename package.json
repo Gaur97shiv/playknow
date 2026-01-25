@@ -8,7 +8,7 @@
     "start": "node be/server.js"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=18.x"
   },
   "repository": {
     "type": "git",

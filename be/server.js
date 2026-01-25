@@ -19,13 +19,13 @@ cloudinary.config({
 
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3001;
 ConnectMongoDb();
 
 app.use(express.json({limit:'5mb'}));
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: true,
   credentials: true
 }));
 
@@ -36,6 +36,6 @@ app.use("/api/notifications", notificationsRoutes);
 app.use("/api/pool", poolRoutes);
 
 
-app.listen(PORT, () => {
+app.listen(PORT, 'localhost', () => {
   console.log(`Server is running on port ${PORT}`);
 });
