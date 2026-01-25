@@ -36,6 +36,6 @@ app.use("/api/notifications", notificationsRoutes);
 app.use("/api/pool", poolRoutes);
 
 
-app.listen(PORT, 'localhost', () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
