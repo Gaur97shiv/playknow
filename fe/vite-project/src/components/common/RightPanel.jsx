@@ -26,9 +26,12 @@ const RightPanel = () => {
 const { follow, isPending } = useFollow();
 
 	return (
-		<div className='hidden lg:block my-8 mx-2'>
-			<div className='bg-gray-400 p-4 rounded-md sticky top-2'>
-				<p className='font-bold'>Who to follow</p>
+		<div className='hidden lg:block my-6 mx-3 w-72'>
+			<div className='right-panel-card p-5 rounded-xl sticky top-4 decorative-corner'>
+				<div className='flex items-center gap-2 mb-4'>
+					<span className='text-xl'>👥</span>
+					<p className='font-future text-royal-gold text-sm tracking-wide'>Who to Follow</p>
+				</div>
 				<div className='flex flex-col gap-4'>
 					{isLoading && (
 						<>
@@ -42,35 +45,46 @@ const { follow, isPending } = useFollow();
 						suggestedUser?.map((user) => (
 							<Link
 								to={`/profile/${user.name}`}
-								className='flex items-center justify-between gap-4'
+								className='flex items-center justify-between gap-3 p-2 rounded-lg hover:bg-white/5 transition-all duration-300'
 								key={user._id}
 							>
-								<div className='flex gap-2 items-center'>
+								<div className='flex gap-3 items-center'>
 									<div className='avatar'>
-										<div className='w-8 rounded-full'>
+										<div className='w-10 rounded-full avatar-vintage overflow-hidden'>
 											<img src={user.profileImg || "/avatar-placeholder.png"} />
 										</div>
 									</div>
 									<div className='flex flex-col'>
-										<span className='font-semibold tracking-tight truncate w-28'>
+										<span className='font-semibold text-cream text-sm truncate w-24'>
 											{user.name}
 										</span>
-										<span className='text-sm text-slate-500'>@{user.name}</span>
+										<span className='text-xs text-gray-500'>@{user.name}</span>
 									</div>
 								</div>
 								<div>
 									<button
-										className='btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm'
+										className='vintage-btn text-xs px-3 py-1.5 rounded-lg'
 										onClick={(e) => {
 											e.preventDefault();
 										follow(user._id);
 										}}
 									>
-										{isPending ? "Following..." : "Follow"}
+										{isPending ? "..." : "Follow"}
 									</button>
 								</div>
 							</Link>
 						))}
+				</div>
+				
+				<div className='mt-6 pt-4 border-t border-royal-gold/30'>
+					<p className='text-xs text-gray-500 font-future tracking-wider text-center'>
+						ENGAGE & EARN
+					</p>
+					<div className='flex justify-center gap-1 mt-2'>
+						<span className='w-1.5 h-1.5 rounded-full bg-saffron'></span>
+						<span className='w-1.5 h-1.5 rounded-full bg-white'></span>
+						<span className='w-1.5 h-1.5 rounded-full bg-india-green'></span>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -49,7 +49,6 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 		queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		setComment("");
 		
-		// Show balance update if available
 		if (data.balance !== undefined) {
 			toast.success(`Remaining balance: ${data.balance} coins`);
 		}
@@ -60,7 +59,7 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 });
 
 	const {mutate: deletePost ,isPending:isDeleting } = useMutation({
-          mutationFn: async () => {
+	  mutationFn: async () => {
 
 			try {
 				const res=await fetch(`/api/post/${post._id}`,
@@ -101,9 +100,7 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 			}
 		},
 		onSuccess: (data) => {
-			// Handle both like and unlike responses
 			if (Array.isArray(data)) {
-				// Unlike response (just array of likes)
 				queryClient.setQueryData(["posts"], (oldData) => {
 					return oldData.map((p) => {
 						if (p._id === post._id) {
@@ -114,7 +111,6 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 				});
 				toast.success("Post unliked successfully");
 			} else if (data.likes && data.balance) {
-				// Like response (object with likes, balance, post)
 				queryClient.setQueryData(["posts"], (oldData) => {
 					return oldData.map((p) => {
 						if (p._id === post._id) {
@@ -149,94 +145,93 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 
 	return (
 		<>
-			<div className='flex flex-row gap-2 items-start p-4 border-b border-gray-700'>
+			<div className='post-card flex flex-row gap-3 items-start p-4'>
 				<div className='avatar'>
-					<Link to={`/profile/${postOwner.name}`} className='w-8 rounded-full overflow-hidden'>
+					<Link to={`/profile/${postOwner.name}`} className='w-10 rounded-full avatar-vintage overflow-hidden block'>
 						<img src={postOwner.profileImg || "/avatar-placeholder.png"} />
 					</Link>
 				</div>
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-2 items-center'>
-						<Link to={`/profile/${postOwner.name}`} className='font-bold'>
+						<Link to={`/profile/${postOwner.name}`} className='font-bold text-cream hover:text-saffron transition-colors'>
 							{postOwner.name}
 						</Link>
-						<span className='text-gray-700 flex gap-1 text-sm'>
-							<Link to={`/profile/${postOwner.name}`}>@{postOwner.name}</Link>
+						<span className='text-gray-500 flex gap-1 text-sm'>
+							<Link to={`/profile/${postOwner.name}`} className='hover:text-neon-cyan transition-colors'>@{postOwner.name}</Link>
 							<span>·</span>
-							<span>{formattedDate}</span>
+							<span className='text-gray-600'>{formattedDate}</span>
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
-								<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />
+								<FaTrash className='cursor-pointer text-gray-500 hover:text-neon-pink transition-colors' onClick={handleDeletePost} />
 								{isDeleting && <LoadingSpinner size="sm"/>}
 							</span>
 						)}
 					</div>
-					<div className='flex flex-col gap-3 overflow-hidden'>
-						<span>{post.content}</span>
+					<div className='flex flex-col gap-3 overflow-hidden mt-2'>
+						<span className='text-cream/90 leading-relaxed'>{post.content}</span>
 						{post.img && (
 							<img
 								src={post.img}
-								className='h-80 object-contain rounded-lg border border-gray-700'
+								className='h-80 object-contain rounded-lg border-2 border-royal-gold/30 shadow-[0_0_20px_rgba(255,215,0,0.1)]'
 								alt=''
 							/>
 						)}
 					</div>
-					<div className='flex justify-between mt-3'>
-						<div className='flex gap-4 items-center w-2/3 justify-between'>
+					<div className='flex justify-between mt-4'>
+						<div className='flex gap-6 items-center w-2/3'>
 							<div
 								className='flex gap-1 items-center cursor-pointer group'
 								onClick={() => document.getElementById("comments_modal" + post._id).showModal()}
 							>
-								<FaRegComment className='w-4 h-4  text-slate-500 group-hover:text-sky-400' />
-								<span className='text-sm text-slate-500 group-hover:text-sky-400'>
+								<FaRegComment className='w-4 h-4 text-gray-500 group-hover:text-neon-cyan transition-colors' />
+								<span className='text-sm text-gray-500 group-hover:text-neon-cyan transition-colors'>
 									{post.comments.length}
 								</span>
 							</div>
-							{/* We're using Modal Component from DaisyUI */}
 							<dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
-								<div className='modal-box rounded border border-gray-600'>
-									<h3 className='font-bold text-lg mb-4'>COMMENTS</h3>
+								<div className='modal-box rounded-xl'>
+									<h3 className='font-future text-lg mb-4 gold-text tracking-wide'>COMMENTS</h3>
 									<div className='flex flex-col gap-3 max-h-60 overflow-auto'>
 										{post.comments.length === 0 && (
-											<p className='text-sm text-slate-500'>
-												No comments yet 🤔 Be the first one 😉
+											<p className='text-sm text-gray-500'>
+												No comments yet. Be the first one!
 											</p>
 										)}
 										{post.comments.map((comment) => (
-											<div key={comment._id} className='flex gap-2 items-start'>
+											<div key={comment._id} className='flex gap-2 items-start p-2 rounded-lg bg-white/5'>
 												<div className='avatar'>
-													<div className='w-8 rounded-full'>
+													<div className='w-8 rounded-full avatar-vintage overflow-hidden'>
 														<img
 															src={comment.user.profileImg || "/avatar-placeholder.png"}
 														/>
 													</div>
 												</div>
 												<div className='flex flex-col'>
-													<div className='flex items-center gap-1'>
-														<span className='font-bold'>{comment.user.fullName}</span>
-														<span className='text-gray-700 text-sm'>
+													<div className='flex items-center gap-2'>
+														<span className='font-bold text-cream text-sm'>{comment.user.fullName}</span>
+														<span className='text-gray-500 text-xs'>
 															@{comment.user.name}
 														</span>
 													</div>
-													<div className='text-sm'>{comment.text}</div>
+													<div className='text-sm text-cream/80'>{comment.text}</div>
 												</div>
 											</div>
 										))}
 									</div>
 									<form
-										className='flex gap-2 items-center mt-4 border-t border-gray-600 pt-2'
+										className='flex gap-2 items-center mt-4 border-t border-royal-gold/30 pt-4'
 										onSubmit={handlePostComment}
 									>
 										<textarea
-											className='textarea w-full p-1 rounded text-md resize-none border focus:outline-none  border-gray-800'
+											className='textarea w-full p-2 rounded-lg text-md resize-none'
 											placeholder='Add a comment...'
 											value={comment}
 											onChange={(e) => setComment(e.target.value)}
 										/>
-										<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
+										<button className='vintage-btn rounded-lg text-sm px-4 py-2'>
 											{isCommenting ? (
-												<span className='loading loading-spinner loading-md'></span>
+												<span className='loading loading-spinner loading-sm'></span>
 											) : (
 												"Post"
 											)}
@@ -248,31 +243,30 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 								</form>
 							</dialog>
 							<div className='flex gap-1 items-center group cursor-pointer'>
-								<BiRepost className='w-6 h-6  text-slate-500 group-hover:text-green-500' />
-								<span className='text-sm text-slate-500 group-hover:text-green-500'>0</span>
+								<BiRepost className='w-5 h-5 text-gray-500 group-hover:text-india-green transition-colors' />
+								<span className='text-sm text-gray-500 group-hover:text-india-green transition-colors'>0</span>
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
 								{isLiking && <LoadingSpinner size='sm' />}
 								{!isLiked && !isLiking && (
-									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
+									<FaRegHeart className='w-4 h-4 cursor-pointer text-gray-500 group-hover:text-neon-pink transition-colors' />
 								)}
 								{isLiked && !isLiking && (
-									<FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />
+									<FaRegHeart className='w-4 h-4 cursor-pointer text-neon-pink' />
 								)}
 
 								<span
-									className={`text-sm  group-hover:text-pink-500 ${
-										isLiked ? "text-pink-500" : "text-slate-500"
+									className={`text-sm transition-colors ${
+										isLiked ? "text-neon-pink" : "text-gray-500 group-hover:text-neon-pink"
 									}`}
 								>
 									{post.likes.length}
 								</span>
 								
-								{/* Post Pool Coins Display */}
 								{post.total_coin_on_post > 0 && (
-									<div className='flex items-center gap-1 ml-2'>
-										<span className='text-xs text-yellow-400'>💰</span>
-										<span className='text-xs text-yellow-400 font-semibold'>
+									<div className='flex items-center gap-1 ml-2 pool-display py-1 px-2'>
+										<span className='text-xs'>💰</span>
+										<span className='text-xs text-royal-gold font-bold'>
 											{post.total_coin_on_post}
 										</span>
 									</div>
@@ -280,7 +274,7 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 							</div>
 						</div>
 						<div className='flex w-1/3 justify-end gap-2 items-center'>
-							<FaRegBookmark className='w-4 h-4 text-slate-500 cursor-pointer' />
+							<FaRegBookmark className='w-4 h-4 text-gray-500 cursor-pointer hover:text-royal-gold transition-colors' />
 						</div>
 					</div>
 				</div>

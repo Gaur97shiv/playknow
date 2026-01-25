@@ -42,39 +42,48 @@ const Sidebar = () => {
 
 	return (
 		<div className='md:flex-[2_2_0] w-18 max-w-52'>
-			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
-				<Link to='/' className='flex justify-center md:justify-start'>
-					<XSvg className='px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900' />
+			<div className='vintage-sidebar sticky top-0 left-0 h-screen flex flex-col w-20 md:w-full'>
+				<Link to='/' className='flex justify-center md:justify-start p-4'>
+					<XSvg className='w-10 h-10 drop-shadow-[0_0_15px_rgba(255,215,0,0.5)] hover:drop-shadow-[0_0_25px_rgba(255,215,0,0.8)] transition-all duration-300' />
 				</Link>
-				<ul className='flex flex-col gap-3 mt-4'>
-					{/* Daily Pool Display */}
+				
+				<ul className='flex flex-col gap-2 mt-4 px-2'>
 					{!poolLoading && dailyPool && (
-						<li className='flex justify-center md:justify-start'>
-							<div className='flex flex-col items-center md:items-start gap-1 px-2 py-1'>
+						<li className='flex justify-center md:justify-start mb-2'>
+							<div className='pool-display w-full'>
 								<div className='flex items-center gap-2'>
-									<span className='text-xs text-yellow-400'>💰</span>
-									<span className='text-xs text-yellow-400 font-bold'>
-										Daily Pool: {dailyPool.total_pool_coins || 0}
-									</span>
+									<span className='text-lg'>💰</span>
+									<div className='flex flex-col'>
+										<span className='text-xs text-royal-gold font-future font-bold'>
+											Daily Pool
+										</span>
+										<span className='text-sm text-royal-gold font-bold'>
+											{dailyPool.total_pool_coins || 0} coins
+										</span>
+									</div>
 								</div>
-								<span className='text-xs text-gray-500 hidden md:block'>
+								<span className='text-xs text-gray-400 hidden md:block mt-1'>
 									{dailyPool.posts_count || 0} posts today
 								</span>
 							</div>
 						</li>
 					)}
 					
-					{/* User Balance Display */}
 					{!balanceLoading && userBalance && (
-						<li className='flex justify-center md:justify-start'>
-							<div className='flex flex-col items-center md:items-start gap-1 px-2 py-1'>
+						<li className='flex justify-center md:justify-start mb-4'>
+							<div className='balance-display w-full'>
 								<div className='flex items-center gap-2'>
-									<span className='text-xs text-green-400'>🪙</span>
-									<span className='text-xs text-green-400 font-bold'>
-										My Balance: {userBalance.balance || 0}
-									</span>
+									<span className='text-lg'>🪙</span>
+									<div className='flex flex-col'>
+										<span className='text-xs text-india-green font-future font-bold'>
+											My Balance
+										</span>
+										<span className='text-sm text-neon-green font-bold'>
+											{userBalance.balance || 0} coins
+										</span>
+									</div>
 								</div>
-								<span className='text-xs text-gray-500 hidden md:block'>
+								<span className='text-xs text-gray-400 hidden md:block mt-1'>
 									@{userBalance.userName}
 								</span>
 							</div>
@@ -84,56 +93,59 @@ const Sidebar = () => {
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to='/'
-							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+							className='sidebar-link flex gap-3 items-center rounded-lg py-3 pl-3 pr-4 w-full text-cream hover:text-saffron transition-colors'
 						>
-							<MdHomeFilled className='w-8 h-8' />
-							<span className='text-lg hidden md:block'>Home</span>
+							<MdHomeFilled className='w-6 h-6' />
+							<span className='text-base hidden md:block font-future tracking-wide'>Home</span>
 						</Link>
 					</li>
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to='/notifications'
-							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+							className='sidebar-link flex gap-3 items-center rounded-lg py-3 pl-3 pr-4 w-full text-cream hover:text-saffron transition-colors'
 						>
-							<IoNotifications className='w-6 h-6' />
-							<span className='text-lg hidden md:block'>Notifications</span>
+							<IoNotifications className='w-5 h-5' />
+							<span className='text-base hidden md:block font-future tracking-wide'>Alerts</span>
 						</Link>
 					</li>
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to={`/profile/${authUser?.name}`}
-							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+							className='sidebar-link flex gap-3 items-center rounded-lg py-3 pl-3 pr-4 w-full text-cream hover:text-saffron transition-colors'
 						>
-							<FaUser className='w-6 h-6' />
-							<span className='text-lg hidden md:block'>Profile</span>
+							<FaUser className='w-5 h-5' />
+							<span className='text-base hidden md:block font-future tracking-wide'>Profile</span>
 						</Link>
 					</li>
 				</ul>
+				
 				{authUser && (
-					<Link
-						to={`/profile/${authUser.name}`}
-						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'
-					>
-						<div className='avatar hidden md:inline-flex'>
-							<div className='w-8 rounded-full'>
-								<img src={authUser?.profileImg || "/avatar-placeholder.png"} />
+					<div className='mt-auto mb-6 px-2'>
+						<Link
+							to={`/profile/${authUser.name}`}
+							className='retro-card flex gap-3 items-center p-3 rounded-lg hover:border-saffron transition-all duration-300'
+						>
+							<div className='avatar hidden md:inline-flex'>
+								<div className='w-10 rounded-full avatar-vintage overflow-hidden'>
+									<img src={authUser?.profileImg || "/avatar-placeholder.png"} />
+								</div>
 							</div>
-						</div>
-						<div className='flex justify-between flex-1'>
-							<div className='hidden md:block'>
-								<p className='text-white font-bold text-sm w-20 truncate'>{authUser?.name}</p>
-								<p className='text-slate-500 text-sm'>@{authUser?.name}</p>
+							<div className='flex justify-between flex-1 items-center'>
+								<div className='hidden md:block'>
+									<p className='text-cream font-bold text-sm w-20 truncate'>{authUser?.name}</p>
+									<p className='text-gray-500 text-xs'>@{authUser?.name}</p>
+								</div>
+								<BiLogOut
+									className='w-5 h-5 text-neon-pink hover:text-neon-cyan cursor-pointer transition-colors'
+									onClick={(e) => {
+										e.preventDefault();
+										logout();
+									}}
+								/>
 							</div>
-							<BiLogOut
-								className='w-5 h-5 cursor-pointer'
-								onClick={(e) => {
-									e.preventDefault();
-									logout();
-								}}
-							/>
-						</div>
-					</Link>
+						</Link>
+					</div>
 				)}
 			</div>
 		</div>

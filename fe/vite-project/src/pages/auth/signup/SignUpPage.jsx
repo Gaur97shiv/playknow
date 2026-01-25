@@ -18,7 +18,7 @@ const SignUpPage = () => {
 	const {mutate ,isError, isPending  }= useMutation({
 		mutationFn: async (formData) => {
 			try {
-			const response = await fetch('http://localhost:5000/api/auth/signup', {
+			const response = await fetch('/api/auth/signup', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ const SignUpPage = () => {
 					name: formData.fullName,
                     email: formData.email,
                     password: formData.password}),
-			});
+				});
 			if (!response.ok) {
 				const errorData = await response.json();  
                 throw new Error(errorData.message || 'Signup failed');
@@ -66,59 +66,80 @@ const SignUpPage = () => {
 
 
 	return (
-		<div className='max-w-screen-2xl mx-auto flex h-screen px-10'>
-			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-				<XSvg className=' lg:w-2/3 fill-white' />
+		<div className='max-w-screen-2xl mx-auto flex h-screen px-6'>
+			<div className='flex-1 hidden lg:flex items-center justify-center'>
+				<div className='relative decorative-corner p-8'>
+					<XSvg className='lg:w-72 h-72 drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]' />
+					<div className='absolute -bottom-8 left-1/2 -translate-x-1/2 text-center'>
+						<p className='font-future text-neon-cyan text-sm tracking-widest neon-text'>JOIN THE</p>
+						<p className='font-future text-saffron text-xl tracking-widest' style={{textShadow: '0 0 10px #FF9933'}}>REVOLUTION</p>
+					</div>
+				</div>
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
-				<form className='lg:w-2/3  mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit}>
-					<XSvg className='w-24 lg:hidden fill-white' />
-					<h1 className='text-4xl font-extrabold text-white'>Join today.</h1>
-					<label className='input input-bordered rounded flex items-center gap-1'>
-						<MdOutlineMail />
+				<form className='retro-card decorative-corner p-8 rounded-lg flex gap-5 flex-col w-full max-w-md' onSubmit={handleSubmit}>
+					<XSvg className='w-20 lg:hidden mx-auto drop-shadow-[0_0_20px_rgba(255,215,0,0.5)]' />
+					<div className='text-center mb-2'>
+						<h1 className='font-future text-3xl gold-text tracking-wide'>Create Account</h1>
+						<p className='text-neon-cyan text-sm font-future tracking-widest mt-2 neon-text'>Join today.</p>
+					</div>
+					
+					<label className='cyber-input rounded-lg flex items-center gap-3 px-4 py-3'>
+						<MdOutlineMail className='text-neon-cyan text-xl' />
 						<input
 							type='email'
-							className='grow'
+							className='grow bg-transparent border-none outline-none text-white placeholder-gray-500'
 							placeholder='Email'
 							name='email'
 							onChange={handleInputChange}
 							value={formData.email}
 						/>
 					</label>
-					<div className='flex gap-4 flex-wrap'>
-						<label className='input input-bordered rounded flex items-center gap-2 flex-1'>
-							<MdDriveFileRenameOutline />
-							<input
-								type='text'
-								className='grow'
-								placeholder='Full Name'
-								name='fullName'
-								onChange={handleInputChange}
-								value={formData.fullName}
-							/>
-						</label>
-					</div>
-					<label className='input input-bordered rounded flex items-center gap-2'>
-						<MdPassword />
+					
+					<label className='cyber-input rounded-lg flex items-center gap-3 px-4 py-3'>
+						<MdDriveFileRenameOutline className='text-neon-cyan text-xl' />
+						<input
+							type='text'
+							className='grow bg-transparent border-none outline-none text-white placeholder-gray-500'
+							placeholder='Full Name'
+							name='fullName'
+							onChange={handleInputChange}
+							value={formData.fullName}
+						/>
+					</label>
+					
+					<label className='cyber-input rounded-lg flex items-center gap-3 px-4 py-3'>
+						<MdPassword className='text-neon-cyan text-xl' />
 						<input
 							type='password'
-							className='grow'
+							className='grow bg-transparent border-none outline-none text-white placeholder-gray-500'
 							placeholder='Password'
 							name='password'
 							onChange={handleInputChange}
 							value={formData.password}
 						/>
 					</label>
-					<button className='btn rounded-full btn-primary text-white'>
+					
+					<button className='vintage-btn rounded-lg py-3 text-white mt-2'>
 						{isPending ? "Signing Up..." : "Sign Up"}
 					</button>
-					{isError && <p className='text-red-500'>Something went wrong</p>}
+					{isError && <p className='text-neon-pink text-center'>Something went wrong</p>}
 				</form>
-				<div className='flex flex-col lg:w-2/3 gap-2 mt-4'>
-					<p className='text-white text-lg'>Already have an account?</p>
+				
+				<div className='flex flex-col gap-3 mt-6 text-center'>
+					<p className='text-cream text-lg font-classic'>Already have an account?</p>
 					<Link to='/login'>
-						<button className='btn rounded-full btn-primary text-white btn-outline w-full'>Sign in</button>
+						<button className='outline-btn rounded-lg px-8 py-2 min-w-[200px]'>Sign in</button>
 					</Link>
+				</div>
+				
+				<div className='mt-8 text-center'>
+					<p className='text-gray-500 text-xs font-future tracking-wider'>EARN REWARDS FOR ENGAGEMENT</p>
+					<div className='flex justify-center gap-2 mt-2'>
+						<span className='w-2 h-2 rounded-full bg-saffron animate-pulse'></span>
+						<span className='w-2 h-2 rounded-full bg-white animate-pulse' style={{animationDelay: '0.2s'}}></span>
+						<span className='w-2 h-2 rounded-full bg-india-green animate-pulse' style={{animationDelay: '0.4s'}}></span>
+					</div>
 				</div>
 			</div>
 		</div>

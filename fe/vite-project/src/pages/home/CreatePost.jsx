@@ -42,7 +42,6 @@ const { mutate: createPost ,isPending } = useMutation({
    queryClient.invalidateQueries({ queryKey: ['userBalance'] });
    queryClient.invalidateQueries({ queryKey: ['dailyPool'] });
    
-   // Show balance update if available
    if (data.balance !== undefined) {
      toast.success(`Remaining balance: ${data.balance} coins`);
    }
@@ -67,42 +66,42 @@ const { mutate: createPost ,isPending } = useMutation({
 	};
 
 	return (
-		<div className='flex p-4 items-start gap-4 border-b border-green-400'>
+		<div className='post-card flex p-4 items-start gap-4 border-b-2 border-royal-gold/30'>
 			<div className='avatar'>
-				<div className='w-8 rounded-full'>
+				<div className='w-10 rounded-full avatar-vintage overflow-hidden'>
 					<img src={authUser.profileImg || "/avatar-placeholder.png"} />
 				</div>
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
 				<textarea
-					className='textarea w-full p-0 text-lg resize-none border-none focus:outline-none  border-gray-800'
-					placeholder='What is happening?!'
+					className='textarea w-full p-2 text-lg resize-none bg-transparent border-none focus:outline-none text-cream placeholder-gray-500'
+					placeholder='Share your thoughts...'
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 				/>
 				{img && (
 					<div className='relative w-72 mx-auto'>
 						<IoCloseSharp
-							className='absolute top-0 right-0 text-white bg-gray-800 rounded-full w-5 h-5 cursor-pointer'
+							className='absolute top-2 right-2 text-white bg-black/70 rounded-full w-6 h-6 cursor-pointer p-1 hover:bg-neon-pink transition-colors'
 							onClick={() => {
 								setImg(null);
 								imgRef.current.value = null;
 							}}
 						/>
-						<img src={img} className='w-full mx-auto h-72 object-contain rounded' />
+						<img src={img} className='w-full mx-auto h-72 object-contain rounded-lg border-2 border-royal-gold/30' />
 					</div>
 				)}
 
-				<div className='flex justify-between border-t py-2 border-t-gray-700'>
-					<div className='flex gap-1 items-center'>
+				<div className='flex justify-between border-t py-3 border-t-royal-gold/30'>
+					<div className='flex gap-3 items-center'>
 						<CiImageOn
-							className='fill-primary w-6 h-6 cursor-pointer'
+							className='w-6 h-6 cursor-pointer text-saffron hover:text-royal-gold transition-colors'
 							onClick={() => imgRef.current.click()}
 						/>
-						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
+						<BsEmojiSmileFill className='w-5 h-5 cursor-pointer text-saffron hover:text-royal-gold transition-colors' />
 					</div>
 					<input type='file' accept='image/*' hidden ref={imgRef} onChange={handleImgChange} />
-					<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
+					<button className='vintage-btn rounded-lg text-sm px-5 py-2'>
 						{isPending ? "Posting..." : "Post"}
 					</button>
 				</div>
