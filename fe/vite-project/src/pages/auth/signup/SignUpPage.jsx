@@ -68,77 +68,91 @@ const SignUpPage = () => {
 	return (
 		<div className='max-w-screen-2xl mx-auto flex h-screen px-6'>
 			<div className='flex-1 hidden lg:flex items-center justify-center'>
-				<div className='relative decorative-corner p-8'>
-					<XSvg className='lg:w-72 h-72 drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]' />
-					<div className='absolute -bottom-8 left-1/2 -translate-x-1/2 text-center'>
-						<p className='font-future text-neon-cyan text-sm tracking-widest neon-text'>JOIN THE</p>
-						<p className='font-future text-saffron text-xl tracking-widest' style={{textShadow: '0 0 10px #FF9933'}}>REVOLUTION</p>
+				<div className='decorative-border p-6 bg-cream'>
+					<XSvg className='lg:w-52 h-52' />
+					<div className='text-center mt-4'>
+						<h2 className='text-2xl font-bold text-coffee' style={{fontFamily: 'Times New Roman, serif'}}>Join PlayKnow</h2>
+						<p className='text-vintage-brown text-sm mt-1'>Your Voice Has Value</p>
 					</div>
 				</div>
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
-				<form className='retro-card decorative-corner p-8 rounded-lg flex gap-5 flex-col w-full max-w-md' onSubmit={handleSubmit}>
-					<XSvg className='w-20 lg:hidden mx-auto drop-shadow-[0_0_20px_rgba(255,215,0,0.5)]' />
-					<div className='text-center mb-2'>
-						<h1 className='font-future text-3xl gold-text tracking-wide'>Create Account</h1>
-						<p className='text-neon-cyan text-sm font-future tracking-widest mt-2 neon-text'>Join today.</p>
+				<div className='vintage-card p-8 w-full max-w-md'>
+					<div className='vintage-header -mx-8 -mt-8 mb-6 px-6 py-4 rounded-t'>
+						<h1 className='text-2xl font-bold text-center'>Create Your Account</h1>
 					</div>
 					
-					<label className='cyber-input rounded-lg flex items-center gap-3 px-4 py-3'>
-						<MdOutlineMail className='text-neon-cyan text-xl' />
-						<input
-							type='email'
-							className='grow bg-transparent border-none outline-none text-white placeholder-gray-500'
-							placeholder='Email'
-							name='email'
-							onChange={handleInputChange}
-							value={formData.email}
-						/>
-					</label>
+					<XSvg className='w-16 lg:hidden mx-auto mb-4' />
 					
-					<label className='cyber-input rounded-lg flex items-center gap-3 px-4 py-3'>
-						<MdDriveFileRenameOutline className='text-neon-cyan text-xl' />
-						<input
-							type='text'
-							className='grow bg-transparent border-none outline-none text-white placeholder-gray-500'
-							placeholder='Full Name'
-							name='fullName'
-							onChange={handleInputChange}
-							value={formData.fullName}
-						/>
-					</label>
-					
-					<label className='cyber-input rounded-lg flex items-center gap-3 px-4 py-3'>
-						<MdPassword className='text-neon-cyan text-xl' />
-						<input
-							type='password'
-							className='grow bg-transparent border-none outline-none text-white placeholder-gray-500'
-							placeholder='Password'
-							name='password'
-							onChange={handleInputChange}
-							value={formData.password}
-						/>
-					</label>
-					
-					<button className='vintage-btn rounded-lg py-3 text-white mt-2'>
-						{isPending ? "Signing Up..." : "Sign Up"}
-					</button>
-					{isError && <p className='text-neon-pink text-center'>Something went wrong</p>}
-				</form>
+					<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
+						<div>
+							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+								Email Address:
+							</label>
+							<div className='vintage-input rounded flex items-center gap-2'>
+								<MdOutlineMail className='text-vintage-brown' />
+								<input
+									type='email'
+									className='grow bg-transparent border-none outline-none'
+									placeholder='you@example.com'
+									name='email'
+									onChange={handleInputChange}
+									value={formData.email}
+								/>
+							</div>
+						</div>
+						
+						<div>
+							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+								Full Name:
+							</label>
+							<div className='vintage-input rounded flex items-center gap-2'>
+								<MdDriveFileRenameOutline className='text-vintage-brown' />
+								<input
+									type='text'
+									className='grow bg-transparent border-none outline-none'
+									placeholder='Your full name'
+									name='fullName'
+									onChange={handleInputChange}
+									value={formData.fullName}
+								/>
+							</div>
+						</div>
+						
+						<div>
+							<label className='block text-coffee text-sm font-bold mb-1' style={{fontFamily: 'Arial, sans-serif'}}>
+								Password:
+							</label>
+							<div className='vintage-input rounded flex items-center gap-2'>
+								<MdPassword className='text-vintage-brown' />
+								<input
+									type='password'
+									className='grow bg-transparent border-none outline-none'
+									placeholder='Choose a password'
+									name='password'
+									onChange={handleInputChange}
+									value={formData.password}
+								/>
+							</div>
+						</div>
+						
+						<button className='vintage-btn-primary rounded mt-2'>
+							{isPending ? "Creating Account..." : "Register Now"}
+						</button>
+						{isError && <p className='text-vintage-red text-center text-sm'>Something went wrong</p>}
+					</form>
+				</div>
 				
-				<div className='flex flex-col gap-3 mt-6 text-center'>
-					<p className='text-cream text-lg font-classic'>Already have an account?</p>
+				<div className='vintage-card-raised p-4 mt-4 text-center'>
+					<p className='text-coffee mb-2'>Already a member?</p>
 					<Link to='/login'>
-						<button className='outline-btn rounded-lg px-8 py-2 min-w-[200px]'>Sign in</button>
+						<button className='vintage-btn-secondary rounded px-6 py-2'>Sign In</button>
 					</Link>
 				</div>
 				
-				<div className='mt-8 text-center'>
-					<p className='text-gray-500 text-xs font-future tracking-wider'>EARN REWARDS FOR ENGAGEMENT</p>
-					<div className='flex justify-center gap-2 mt-2'>
-						<span className='w-2 h-2 rounded-full bg-saffron animate-pulse'></span>
-						<span className='w-2 h-2 rounded-full bg-white animate-pulse' style={{animationDelay: '0.2s'}}></span>
-						<span className='w-2 h-2 rounded-full bg-india-green animate-pulse' style={{animationDelay: '0.4s'}}></span>
+				<div className='mt-6 text-center'>
+					<div className='marquee-style px-4 py-1 rounded'>
+						*** FREE Registration *** Earn Coins for Every Post! ***
 					</div>
 				</div>
 			</div>

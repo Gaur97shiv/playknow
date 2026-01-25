@@ -27,12 +27,11 @@ const { follow, isPending } = useFollow();
 
 	return (
 		<div className='hidden lg:block my-6 mx-3 w-72'>
-			<div className='right-panel-card p-5 rounded-xl sticky top-4 decorative-corner'>
-				<div className='flex items-center gap-2 mb-4'>
-					<span className='text-xl'>👥</span>
-					<p className='font-future text-royal-gold text-sm tracking-wide'>Who to Follow</p>
+			<div className='right-panel-card p-4 rounded sticky top-4'>
+				<div className='vintage-header -mx-4 -mt-4 mb-4 px-4 py-3 rounded-t'>
+					<p className='font-bold text-center'>Who to Follow</p>
 				</div>
-				<div className='flex flex-col gap-4'>
+				<div className='flex flex-col gap-3'>
 					{isLoading && (
 						<>
 							<RightPanelSkeleton />
@@ -45,7 +44,7 @@ const { follow, isPending } = useFollow();
 						suggestedUser?.map((user) => (
 							<Link
 								to={`/profile/${user.name}`}
-								className='flex items-center justify-between gap-3 p-2 rounded-lg hover:bg-white/5 transition-all duration-300'
+								className='flex items-center justify-between gap-3 p-2 rounded hover:bg-cream-dark transition-colors'
 								key={user._id}
 							>
 								<div className='flex gap-3 items-center'>
@@ -55,15 +54,15 @@ const { follow, isPending } = useFollow();
 										</div>
 									</div>
 									<div className='flex flex-col'>
-										<span className='font-semibold text-cream text-sm truncate w-24'>
+										<span className='font-bold text-coffee text-sm truncate w-24'>
 											{user.name}
 										</span>
-										<span className='text-xs text-gray-500'>@{user.name}</span>
+										<span className='text-xs text-vintage-brown'>@{user.name}</span>
 									</div>
 								</div>
 								<div>
 									<button
-										className='vintage-btn text-xs px-3 py-1.5 rounded-lg'
+										className='vintage-btn text-xs px-3 py-1.5 rounded'
 										onClick={(e) => {
 											e.preventDefault();
 										follow(user._id);
@@ -76,14 +75,16 @@ const { follow, isPending } = useFollow();
 						))}
 				</div>
 				
-				<div className='mt-6 pt-4 border-t border-royal-gold/30'>
-					<p className='text-xs text-gray-500 font-future tracking-wider text-center'>
-						ENGAGE & EARN
+				<hr className='vintage-divider my-4' />
+				
+				<div className='text-center'>
+					<p className='text-xs text-vintage-brown' style={{fontFamily: 'Arial, sans-serif'}}>
+						You are visitor #<span className='text-vintage-orange font-bold'>000,042</span>
 					</p>
 					<div className='flex justify-center gap-1 mt-2'>
-						<span className='w-1.5 h-1.5 rounded-full bg-saffron'></span>
-						<span className='w-1.5 h-1.5 rounded-full bg-white'></span>
-						<span className='w-1.5 h-1.5 rounded-full bg-india-green'></span>
+						<div className='w-2 h-2 bg-vintage-orange rounded-full'></div>
+						<div className='w-2 h-2 bg-vintage-green rounded-full'></div>
+						<div className='w-2 h-2 bg-vintage-blue rounded-full'></div>
 					</div>
 				</div>
 			</div>

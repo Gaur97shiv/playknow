@@ -47,22 +47,22 @@ const NotificationPage = () => {
 
 	return (
 		<>
-			<div className='flex-[4_4_0] border-l border-r border-royal-gold/30 min-h-screen'>
-				<div className='flex justify-between items-center p-4 border-b border-royal-gold/30 bg-gradient-to-r from-transparent via-base-200/50 to-transparent'>
+			<div className='flex-[4_4_0] border-l-3 border-r-3 border-vintage-tan min-h-screen bg-cream'>
+				<div className='vintage-header flex justify-between items-center p-4'>
 					<div className='flex items-center gap-2'>
-						<span className='text-xl'>🔔</span>
-						<p className='font-future text-royal-gold tracking-wide'>Notifications</p>
+						<span className='text-xl'>📬</span>
+						<p className='font-bold'>Notifications</p>
 					</div>
 					<div className='dropdown dropdown-end'>
-						<div tabIndex={0} role='button' className='p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer'>
-							<IoSettingsOutline className='w-5 h-5 text-gray-400 hover:text-neon-cyan transition-colors' />
+						<div tabIndex={0} role='button' className='p-2 rounded hover:bg-white/20 transition-colors cursor-pointer'>
+							<IoSettingsOutline className='w-5 h-5' />
 						</div>
 						<ul
 							tabIndex={0}
-							className='dropdown-content z-[1] menu p-2 shadow-lg right-panel-card rounded-lg w-56'
+							className='dropdown-content z-[1] menu p-2 shadow-lg vintage-card rounded w-56'
 						>
 							<li>
-								<a onClick={deleteNotifications} className='text-cream hover:text-neon-pink transition-colors'>
+								<a onClick={deleteNotifications} className='text-coffee hover:text-vintage-red transition-colors'>
 									Delete all notifications
 								</a>
 							</li>
@@ -75,22 +75,23 @@ const NotificationPage = () => {
 					</div>
 				)}
 				{notifications?.length === 0 && (
-					<div className='text-center p-8'>
+					<div className='text-center p-8 vintage-card-inset m-4 rounded'>
 						<span className='text-4xl mb-4 block'>📭</span>
-						<p className='font-future text-gray-400 tracking-wide'>No notifications yet</p>
+						<p className='text-coffee font-bold'>No notifications yet</p>
+						<p className='text-vintage-brown text-sm mt-1'>Check back later!</p>
 					</div>
 				)}
 				{notifications?.map((notification) => (
-					<div className='post-card border-b border-royal-gold/20' key={notification._id}>
+					<div className='post-card' key={notification._id}>
 						<div className='flex gap-3 p-4 items-center'>
 							{notification.type === "follow" && (
-								<div className='p-2 rounded-full bg-india-green/20'>
-									<FaUser className='w-5 h-5 text-india-green' />
+								<div className='p-2 rounded-full bg-vintage-green/20'>
+									<FaUser className='w-5 h-5 text-vintage-green' />
 								</div>
 							)}
 							{notification.type === "like" && (
-								<div className='p-2 rounded-full bg-neon-pink/20'>
-									<FaHeart className='w-5 h-5 text-neon-pink' />
+								<div className='p-2 rounded-full bg-vintage-red/20'>
+									<FaHeart className='w-5 h-5 text-vintage-red' />
 								</div>
 							)}
 							<Link to={`/profile/${notification.from.username}`} className='flex items-center gap-3 flex-1'>
@@ -100,8 +101,8 @@ const NotificationPage = () => {
 									</div>
 								</div>
 								<div className='flex flex-col'>
-									<span className='font-bold text-cream'>@{notification.from.username}</span>
-									<span className='text-gray-400 text-sm'>
+									<span className='font-bold text-coffee'>@{notification.from.username}</span>
+									<span className='text-vintage-brown text-sm'>
 										{notification.type === "follow" ? "followed you" : "liked your post"}
 									</span>
 								</div>

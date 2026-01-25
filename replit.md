@@ -19,10 +19,10 @@ PlayKnow is a paid comment app platform where meaningful user engagement is ince
 - **Storage**: Cloudinary for image uploads
 
 ## UI Theme
-The app features a unique **Vintage 90s Indian + Futuristic** design:
-- **Colors**: Indian tricolor (saffron #FF9933, white, india-green #138808), royal gold #FFD700, neon cyan #00FFFF, neon pink #FF1493
-- **Fonts**: Orbitron (futuristic), Playfair Display (classic), Press Start 2P (retro)
-- **Effects**: Cyber grid backgrounds, scanline overlays, neon glows, decorative corner frames
+The app features a **Classic 90s Vintage** design with light/creamy colors:
+- **Colors**: Cream (#FFF8E7), vintage tan (#D4B896), coffee brown (#6F4E37), vintage orange (#E07020), vintage green (#2E6B4D)
+- **Fonts**: Times New Roman (classic), Arial (system)
+- **Effects**: Beveled borders, inset inputs, ridge borders, 3D button shadows, double borders
 
 ## Environment Variables Required
 The backend requires these environment variables:
@@ -45,4 +45,4 @@ The backend requires these environment variables:
 - `/api/pool` - Reward pool management
 
 ## Recent Changes
-- **Jan 25, 2026**: Implemented vintage 90s Indian + futuristic UI theme across all components
+- **Jan 25, 2026**: Redesigned UI with classic 90s vintage light/creamy theme

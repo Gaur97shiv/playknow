@@ -153,27 +153,27 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 				</div>
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-2 items-center'>
-						<Link to={`/profile/${postOwner.name}`} className='font-bold text-cream hover:text-saffron transition-colors'>
+						<Link to={`/profile/${postOwner.name}`} className='font-bold text-coffee hover:text-vintage-orange transition-colors'>
 							{postOwner.name}
 						</Link>
-						<span className='text-gray-500 flex gap-1 text-sm'>
-							<Link to={`/profile/${postOwner.name}`} className='hover:text-neon-cyan transition-colors'>@{postOwner.name}</Link>
-							<span>·</span>
-							<span className='text-gray-600'>{formattedDate}</span>
+						<span className='text-vintage-brown flex gap-1 text-sm'>
+							<Link to={`/profile/${postOwner.name}`} className='hover:text-vintage-blue transition-colors'>@{postOwner.name}</Link>
+							<span>-</span>
+							<span>{formattedDate}</span>
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
-								<FaTrash className='cursor-pointer text-gray-500 hover:text-neon-pink transition-colors' onClick={handleDeletePost} />
+								<FaTrash className='cursor-pointer text-vintage-brown hover:text-vintage-red transition-colors' onClick={handleDeletePost} />
 								{isDeleting && <LoadingSpinner size="sm"/>}
 							</span>
 						)}
 					</div>
 					<div className='flex flex-col gap-3 overflow-hidden mt-2'>
-						<span className='text-cream/90 leading-relaxed'>{post.content}</span>
+						<span className='text-coffee leading-relaxed'>{post.content}</span>
 						{post.img && (
 							<img
 								src={post.img}
-								className='h-80 object-contain rounded-lg border-2 border-royal-gold/30 shadow-[0_0_20px_rgba(255,215,0,0.1)]'
+								className='h-80 object-contain rounded border-2 border-vintage-tan shadow-classic'
 								alt=''
 							/>
 						)}
@@ -184,22 +184,24 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 								className='flex gap-1 items-center cursor-pointer group'
 								onClick={() => document.getElementById("comments_modal" + post._id).showModal()}
 							>
-								<FaRegComment className='w-4 h-4 text-gray-500 group-hover:text-neon-cyan transition-colors' />
-								<span className='text-sm text-gray-500 group-hover:text-neon-cyan transition-colors'>
+								<FaRegComment className='w-4 h-4 text-vintage-brown group-hover:text-vintage-blue transition-colors' />
+								<span className='text-sm text-vintage-brown group-hover:text-vintage-blue transition-colors'>
 									{post.comments.length}
 								</span>
 							</div>
 							<dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
-								<div className='modal-box rounded-xl'>
-									<h3 className='font-future text-lg mb-4 gold-text tracking-wide'>COMMENTS</h3>
+								<div className='modal-box rounded'>
+									<div className='vintage-header -mx-6 -mt-6 mb-4 px-4 py-3'>
+										<h3 className='font-bold text-lg text-center'>Comments</h3>
+									</div>
 									<div className='flex flex-col gap-3 max-h-60 overflow-auto'>
 										{post.comments.length === 0 && (
-											<p className='text-sm text-gray-500'>
-												No comments yet. Be the first one!
+											<p className='text-sm text-vintage-brown text-center py-4'>
+												No comments yet. Be the first!
 											</p>
 										)}
 										{post.comments.map((comment) => (
-											<div key={comment._id} className='flex gap-2 items-start p-2 rounded-lg bg-white/5'>
+											<div key={comment._id} className='flex gap-2 items-start p-2 rounded bg-cream-dark'>
 												<div className='avatar'>
 													<div className='w-8 rounded-full avatar-vintage overflow-hidden'>
 														<img
@@ -209,27 +211,27 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 												</div>
 												<div className='flex flex-col'>
 													<div className='flex items-center gap-2'>
-														<span className='font-bold text-cream text-sm'>{comment.user.fullName}</span>
-														<span className='text-gray-500 text-xs'>
+														<span className='font-bold text-coffee text-sm'>{comment.user.fullName}</span>
+														<span className='text-vintage-brown text-xs'>
 															@{comment.user.name}
 														</span>
 													</div>
-													<div className='text-sm text-cream/80'>{comment.text}</div>
+													<div className='text-sm text-coffee'>{comment.text}</div>
 												</div>
 											</div>
 										))}
 									</div>
 									<form
-										className='flex gap-2 items-center mt-4 border-t border-royal-gold/30 pt-4'
+										className='flex gap-2 items-center mt-4 border-t-2 border-vintage-tan pt-4'
 										onSubmit={handlePostComment}
 									>
 										<textarea
-											className='textarea w-full p-2 rounded-lg text-md resize-none'
+											className='textarea w-full p-2 rounded text-md resize-none'
 											placeholder='Add a comment...'
 											value={comment}
 											onChange={(e) => setComment(e.target.value)}
 										/>
-										<button className='vintage-btn rounded-lg text-sm px-4 py-2'>
+										<button className='vintage-btn-primary rounded text-sm px-4 py-2'>
 											{isCommenting ? (
 												<span className='loading loading-spinner loading-sm'></span>
 											) : (
@@ -243,30 +245,30 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 								</form>
 							</dialog>
 							<div className='flex gap-1 items-center group cursor-pointer'>
-								<BiRepost className='w-5 h-5 text-gray-500 group-hover:text-india-green transition-colors' />
-								<span className='text-sm text-gray-500 group-hover:text-india-green transition-colors'>0</span>
+								<BiRepost className='w-5 h-5 text-vintage-brown group-hover:text-vintage-green transition-colors' />
+								<span className='text-sm text-vintage-brown group-hover:text-vintage-green transition-colors'>0</span>
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
 								{isLiking && <LoadingSpinner size='sm' />}
 								{!isLiked && !isLiking && (
-									<FaRegHeart className='w-4 h-4 cursor-pointer text-gray-500 group-hover:text-neon-pink transition-colors' />
+									<FaRegHeart className='w-4 h-4 cursor-pointer text-vintage-brown group-hover:text-vintage-red transition-colors' />
 								)}
 								{isLiked && !isLiking && (
-									<FaRegHeart className='w-4 h-4 cursor-pointer text-neon-pink' />
+									<FaRegHeart className='w-4 h-4 cursor-pointer text-vintage-red' />
 								)}
 
 								<span
 									className={`text-sm transition-colors ${
-										isLiked ? "text-neon-pink" : "text-gray-500 group-hover:text-neon-pink"
+										isLiked ? "text-vintage-red" : "text-vintage-brown group-hover:text-vintage-red"
 									}`}
 								>
 									{post.likes.length}
 								</span>
 								
 								{post.total_coin_on_post > 0 && (
-									<div className='flex items-center gap-1 ml-2 pool-display py-1 px-2'>
+									<div className='flex items-center gap-1 ml-2 pool-display py-1 px-2 rounded'>
 										<span className='text-xs'>💰</span>
-										<span className='text-xs text-royal-gold font-bold'>
+										<span className='text-xs text-vintage-orange font-bold'>
 											{post.total_coin_on_post}
 										</span>
 									</div>
@@ -274,7 +276,7 @@ const { mutate: commentOnPost, isPending: isCommenting } = useMutation({
 							</div>
 						</div>
 						<div className='flex w-1/3 justify-end gap-2 items-center'>
-							<FaRegBookmark className='w-4 h-4 text-gray-500 cursor-pointer hover:text-royal-gold transition-colors' />
+							<FaRegBookmark className='w-4 h-4 text-vintage-brown cursor-pointer hover:text-vintage-blue transition-colors' />
 						</div>
 					</div>
 				</div>

@@ -44,25 +44,25 @@ const Sidebar = () => {
 		<div className='md:flex-[2_2_0] w-18 max-w-52'>
 			<div className='vintage-sidebar sticky top-0 left-0 h-screen flex flex-col w-20 md:w-full'>
 				<Link to='/' className='flex justify-center md:justify-start p-4'>
-					<XSvg className='w-10 h-10 drop-shadow-[0_0_15px_rgba(255,215,0,0.5)] hover:drop-shadow-[0_0_25px_rgba(255,215,0,0.8)] transition-all duration-300' />
+					<XSvg className='w-10 h-10' />
 				</Link>
 				
 				<ul className='flex flex-col gap-2 mt-4 px-2'>
 					{!poolLoading && dailyPool && (
 						<li className='flex justify-center md:justify-start mb-2'>
-							<div className='pool-display w-full'>
+							<div className='pool-display w-full rounded'>
 								<div className='flex items-center gap-2'>
 									<span className='text-lg'>💰</span>
 									<div className='flex flex-col'>
-										<span className='text-xs text-royal-gold font-future font-bold'>
+										<span className='text-xs text-vintage-brown font-bold' style={{fontFamily: 'Arial, sans-serif'}}>
 											Daily Pool
 										</span>
-										<span className='text-sm text-royal-gold font-bold'>
+										<span className='text-sm text-vintage-orange font-bold'>
 											{dailyPool.total_pool_coins || 0} coins
 										</span>
 									</div>
 								</div>
-								<span className='text-xs text-gray-400 hidden md:block mt-1'>
+								<span className='text-xs text-coffee hidden md:block mt-1'>
 									{dailyPool.posts_count || 0} posts today
 								</span>
 							</div>
@@ -71,19 +71,19 @@ const Sidebar = () => {
 					
 					{!balanceLoading && userBalance && (
 						<li className='flex justify-center md:justify-start mb-4'>
-							<div className='balance-display w-full'>
+							<div className='balance-display w-full rounded'>
 								<div className='flex items-center gap-2'>
 									<span className='text-lg'>🪙</span>
 									<div className='flex flex-col'>
-										<span className='text-xs text-india-green font-future font-bold'>
+										<span className='text-xs text-vintage-green font-bold' style={{fontFamily: 'Arial, sans-serif'}}>
 											My Balance
 										</span>
-										<span className='text-sm text-neon-green font-bold'>
+										<span className='text-sm text-vintage-green font-bold'>
 											{userBalance.balance || 0} coins
 										</span>
 									</div>
 								</div>
-								<span className='text-xs text-gray-400 hidden md:block mt-1'>
+								<span className='text-xs text-coffee hidden md:block mt-1'>
 									@{userBalance.userName}
 								</span>
 							</div>
@@ -93,29 +93,29 @@ const Sidebar = () => {
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to='/'
-							className='sidebar-link flex gap-3 items-center rounded-lg py-3 pl-3 pr-4 w-full text-cream hover:text-saffron transition-colors'
+							className='sidebar-link flex gap-3 items-center rounded py-3 pl-3 pr-4 w-full'
 						>
 							<MdHomeFilled className='w-6 h-6' />
-							<span className='text-base hidden md:block font-future tracking-wide'>Home</span>
+							<span className='text-base hidden md:block font-bold' style={{fontFamily: 'Arial, sans-serif'}}>Home</span>
 						</Link>
 					</li>
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to='/notifications'
-							className='sidebar-link flex gap-3 items-center rounded-lg py-3 pl-3 pr-4 w-full text-cream hover:text-saffron transition-colors'
+							className='sidebar-link flex gap-3 items-center rounded py-3 pl-3 pr-4 w-full'
 						>
 							<IoNotifications className='w-5 h-5' />
-							<span className='text-base hidden md:block font-future tracking-wide'>Alerts</span>
+							<span className='text-base hidden md:block font-bold' style={{fontFamily: 'Arial, sans-serif'}}>Notifications</span>
 						</Link>
 					</li>
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to={`/profile/${authUser?.name}`}
-							className='sidebar-link flex gap-3 items-center rounded-lg py-3 pl-3 pr-4 w-full text-cream hover:text-saffron transition-colors'
+							className='sidebar-link flex gap-3 items-center rounded py-3 pl-3 pr-4 w-full'
 						>
 							<FaUser className='w-5 h-5' />
-							<span className='text-base hidden md:block font-future tracking-wide'>Profile</span>
+							<span className='text-base hidden md:block font-bold' style={{fontFamily: 'Arial, sans-serif'}}>Profile</span>
 						</Link>
 					</li>
 				</ul>
@@ -124,7 +124,7 @@ const Sidebar = () => {
 					<div className='mt-auto mb-6 px-2'>
 						<Link
 							to={`/profile/${authUser.name}`}
-							className='retro-card flex gap-3 items-center p-3 rounded-lg hover:border-saffron transition-all duration-300'
+							className='vintage-card-raised flex gap-3 items-center p-3 rounded'
 						>
 							<div className='avatar hidden md:inline-flex'>
 								<div className='w-10 rounded-full avatar-vintage overflow-hidden'>
@@ -133,11 +133,11 @@ const Sidebar = () => {
 							</div>
 							<div className='flex justify-between flex-1 items-center'>
 								<div className='hidden md:block'>
-									<p className='text-cream font-bold text-sm w-20 truncate'>{authUser?.name}</p>
-									<p className='text-gray-500 text-xs'>@{authUser?.name}</p>
+									<p className='text-coffee font-bold text-sm w-20 truncate'>{authUser?.name}</p>
+									<p className='text-vintage-brown text-xs'>@{authUser?.name}</p>
 								</div>
 								<BiLogOut
-									className='w-5 h-5 text-neon-pink hover:text-neon-cyan cursor-pointer transition-colors'
+									className='w-5 h-5 text-vintage-red hover:text-vintage-orange cursor-pointer transition-colors'
 									onClick={(e) => {
 										e.preventDefault();
 										logout();
