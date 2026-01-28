@@ -2,20 +2,25 @@ import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 import {v2 as cloudinary} from "cloudinary";
 import Notification from "../models/notification.model.js";
+import { REWARD_CONFIG } from "../config/rewardConfig.js";
 import { 
     checkUserBalance, 
     deductUserBalance, 
     addToDailyPool,
     addToPostPool
 } from "../lib/utils/balanceUtils.js";
-export const createPost= async (req, res) => {
-    try{
+import { createTransaction } from "../lib/utils/transactionUtils.js";
+import { checkAndLogFraud } from "../lib/utils/fraudDetection.js";
+import { incrementDailyCount } from "../middleware/dailyLimitCheck.js";
+import { getCurrentFreezePeriod } from "../lib/utils/timeUtils.js";
+
+export const createPost = async (req, res) => {
+    try {
         const {content} = req.body;
         let {image} = req.body;
-        const userId=req.user._id.toString();
-        const POSTING_FEE = 20; // 20 points for posting
+        const userId = req.user._id.toString();
+        const POSTING_FEE = REWARD_CONFIG.POST_FEE;
         
-        // Check if user has sufficient balance for posting
         const balanceCheck = await checkUserBalance(userId, POSTING_FEE);
         if (!balanceCheck.success) {
             return res.status(400).json({
@@ -28,35 +33,44 @@ export const createPost= async (req, res) => {
                 error: "Please provide content or image"
             });
         }
+        
+        const fraudCheck = await checkAndLogFraud(userId, "post");
+        if (fraudCheck.flagged && fraudCheck.severity === "high") {
+            return res.status(403).json({
+                error: "Suspicious activity detected. Please try again later."
+            });
+        }
       
         if(image){
-            const uploadedResponse=await cloudinary.uploader.upload(image);
-            image=uploadedResponse.secure_url;
+            const uploadedResponse = await cloudinary.uploader.upload(image);
+            image = uploadedResponse.secure_url;
         }
         
-        // Deduct posting fee from user balance
-        const deductionResult = await deductUserBalance(userId, POSTING_FEE);
+        const deductionResult = await deductUserBalance(userId, POSTING_FEE, "post", null, "Post creation fee");
         if (!deductionResult.success) {
             return res.status(500).json({
                 error: deductionResult.error
             });
         }
         
-        // Add coins to daily pool
-        const poolResult = await addToDailyPool(POSTING_FEE);
+        const poolResult = await addToDailyPool(POSTING_FEE, true);
         if (!poolResult.success) {
-            // If pool update fails, refund the user
-            await deductUserBalance(userId, -POSTING_FEE); // Add back the coins
+            await deductUserBalance(userId, -POSTING_FEE);
             return res.status(500).json({
                 error: poolResult.error
             });
         }
         
-        const newPost=new Post({
+        await incrementDailyCount(userId, "post");
+        
+        const newPost = new Post({
             user: userId,
             content,
-            image
-        })
+            image,
+            freezePeriod: getCurrentFreezePeriod(),
+            post_pool_coins: poolResult.split.prizePool,
+            liker_reserve_coins: poolResult.split.likerReserve
+        });
         await newPost.save();
         
         return res.status(201).json({
@@ -65,63 +79,70 @@ export const createPost= async (req, res) => {
             balance: deductionResult.updatedUser.balance,
             dailyPool: poolResult.dailyPool
         });
-    }catch(err){
+    } catch(err) {
         console.error("Error in createPost controller:", err);
         return res.status(500).json({
             error: "Internal Server Error"
         });
     }
-}
-export const deletePost= async (req, res) => {
-    try{
+};
+
+export const deletePost = async (req, res) => {
+    try {
         const {id} = req.params;
-        const userId=req.user._id.toString();
-        const post=await Post.findById(id);
+        const userId = req.user._id.toString();
+        const post = await Post.findById(id);
+        
         if(!post){
             return res.status(404).json({
                 error: "Post not found"
             });
         }
+        
         if(post.user.toString() !== userId){
             return res.status(403).json({
                 error: "You are not authorized to delete this post"
             });
         }
+        
         if(post.image){
-            const imageId=post.image.split("/").pop().split(".")[0];
+            const imageId = post.image.split("/").pop().split(".")[0];
             await cloudinary.uploader.destroy(imageId);
         }
+        
         await Post.findByIdAndDelete(id);
+        
         return res.status(200).json({
             message: "Post deleted successfully"
         });
-    }catch(err){
+    } catch(err) {
         console.error("Error in deletePost controller:", err);
         return res.status(500).json({
             error: "Internal Server Error"
         });
     }
-}
-export const commentOnPost= async (req, res) => {
-    try{
+};
+
+export const commentOnPost = async (req, res) => {
+    try {
         const {id} = req.params;
         const {text} = req.body;
-        const userId=req.user._id.toString();
-        const COMMENT_FEE = 5; // 5 points for commenting
+        const userId = req.user._id.toString();
+        const COMMENT_FEE = REWARD_CONFIG.COMMENT_FEE;
         
-        const post=await Post.findById(id);
+        const post = await Post.findById(id);
         if(!post){
             return res.status(404).json({
                 error: "Post not found"
             });
         }
+        
         if(!text){
             return res.status(400).json({
                 error: "Please provide a comment"
             });
         }
         
-        // Check if user has sufficient balance for commenting
         const balanceCheck = await checkUserBalance(userId, COMMENT_FEE);
         if (!balanceCheck.success) {
             return res.status(400).json({
@@ -129,23 +150,29 @@ export const commentOnPost= async (req, res) => {
             });
         }
         
-        // Deduct commenting fee from user balance
-        const deductionResult = await deductUserBalance(userId, COMMENT_FEE);
+        const fraudCheck = await checkAndLogFraud(userId, "comment", id);
+        if (fraudCheck.flagged && fraudCheck.severity === "high") {
+            return res.status(403).json({
+                error: "Suspicious activity detected. Please try again later."
+            });
+        }
+        
+        const deductionResult = await deductUserBalance(userId, COMMENT_FEE, "comment", id, "Comment fee");
         if (!deductionResult.success) {
             return res.status(500).json({
                 error: deductionResult.error
             });
         }
         
-        // Add coins to post pool
-        const postPoolResult = await addToPostPool(id, COMMENT_FEE);
+        const postPoolResult = await addToPostPool(id, COMMENT_FEE, true);
         if (!postPoolResult.success) {
-            // If post pool update fails, refund the user
-            await deductUserBalance(userId, -COMMENT_FEE); // Add back the coins
+            await deductUserBalance(userId, -COMMENT_FEE);
             return res.status(500).json({
                 error: postPoolResult.error
             });
         }
+        
+        await incrementDailyCount(userId, "comment");
         
         post.comments.push({
             user: userId,
@@ -158,18 +185,19 @@ export const commentOnPost= async (req, res) => {
             post: postPoolResult.post,
             balance: deductionResult.updatedUser.balance
         });
-    }catch(err){
+    } catch(err) {
         console.error("Error in commentOnPost controller:", err);
         return res.status(500).json({
             error: "Internal Server Error"
         });
     }
-}
+};
+
 export const likeOrUnlikePost = async (req, res) => {
     try {
         const { id: postId } = req.params;
         const userId = req.user._id;
-        const LIKE_FEE = 2; // 2 points for liking
+        const LIKE_FEE = REWARD_CONFIG.LIKE_FEE;
 
         const post = await Post.findById(postId);
         if (!post) {
@@ -177,7 +205,6 @@ export const likeOrUnlikePost = async (req, res) => {
         }
 
         if (post.likes.includes(userId)) {
-            // Unlike - no fee for unliking
             await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
             await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
 
@@ -186,31 +213,36 @@ export const likeOrUnlikePost = async (req, res) => {
             );
             return res.status(200).json(updatedLikes);
         } else {
-            // Like - check balance and deduct fee
             const balanceCheck = await checkUserBalance(userId, LIKE_FEE);
             if (!balanceCheck.success) {
                 return res.status(400).json({
                     error: balanceCheck.error
                 });
             }
+            
+            const fraudCheck = await checkAndLogFraud(userId, "like", postId);
+            if (fraudCheck.flagged && fraudCheck.severity === "high") {
+                return res.status(403).json({
+                    error: "Suspicious activity detected. Please try again later."
+                });
+            }
 
-            // Deduct liking fee from user balance
-            const deductionResult = await deductUserBalance(userId, LIKE_FEE);
+            const deductionResult = await deductUserBalance(userId, LIKE_FEE, "like", postId, "Like fee");
             if (!deductionResult.success) {
                 return res.status(500).json({
                     error: deductionResult.error
                 });
             }
 
-            // Add coins to post pool
-            const postPoolResult = await addToPostPool(postId, LIKE_FEE);
+            const postPoolResult = await addToPostPool(postId, LIKE_FEE, false);
             if (!postPoolResult.success) {
-                // If post pool update fails, refund the user
-                await deductUserBalance(userId, -LIKE_FEE); // Add back the coins
+                await deductUserBalance(userId, -LIKE_FEE);
                 return res.status(500).json({
                     error: postPoolResult.error
                 });
             }
+            
+            await incrementDailyCount(userId, "like");
 
             post.likes.push(userId);
             await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
@@ -238,126 +270,131 @@ export const likeOrUnlikePost = async (req, res) => {
 };
 
 export const getAllPosts = async (req, res) => {
-	try {
-		const posts = await Post.find()
-			.sort({ createdAt: -1 })
-			.populate({
-				path: "user",
-				select: "-password",
-			})
-			.populate({
-				path: "comments.user",
-				select: "-password",
-			});
+    try {
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "user",
+                select: "-password",
+            })
+            .populate({
+                path: "comments.user",
+                select: "-password",
+            });
 
-		if (posts.length === 0) {
-			return res.status(200).json([]);
-		}
+        if (posts.length === 0) {
+            return res.status(200).json([]);
+        }
 
-		// Shuffle posts using Math.random for random ordering
-		const shuffledPosts = posts.sort(() => Math.random() - 0.5);
+        const shuffledPosts = posts.sort(() => Math.random() - 0.5);
 
-		res.status(200).json(shuffledPosts);
-	} catch (error) {
-		console.log("Error in getAllPosts controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
-	}
+        res.status(200).json(shuffledPosts);
+    } catch (error) {
+        console.log("Error in getAllPosts controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
-export const getAllLikedPosts= async (req, res) => {
-const userId=req.user._id;
-try{
-const user=await User.findById(userId);
-if(!user){
-    return res.status(404).json({
-        error: "User not found"
-    });
 
-}
-const likedPosts=await Post.find({_id: {$in: user.likedPost}}).populate({path:"user", select:"-password"}).populate({path:"comments.user" ,select:"-password"}).sort({createdAt: -1});
-return res.status(200).json({
-    message: "Liked posts fetched successfully",
-    likedPosts
-});
+export const getAllLikedPosts = async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const user = await User.findById(userId);
+        if(!user){
+            return res.status(404).json({
+                error: "User not found"
+            });
+        }
+        
+        const likedPosts = await Post.find({_id: {$in: user.likedPost}})
+            .populate({path:"user", select:"-password"})
+            .populate({path:"comments.user", select:"-password"})
+            .sort({createdAt: -1});
+            
+        return res.status(200).json({
+            message: "Liked posts fetched successfully",
+            likedPosts
+        });
+    } catch(err) {
+        console.error("Error in getAllLikedPosts controller:", err);
+        return res.status(500).json({
+            error: "Internal Server Error"
+        });
+    }
+};
 
-}catch(err){
-    console.error("Error in getAllLikedPosts controller:", err);
-    return res.status(500).json({
-        error: "Internal Server Error"
-    });
-}
-}
 export const getFollowingPosts = async (req, res) => {
-	try {
-		const userId = req.user._id;
-		const user = await User.findById(userId);
-		if (!user) return res.status(404).json({ error: "User not found" });
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-		const following = user.following;
+        const following = user.following;
 
-		const feedPosts = await Post.find({ user: { $in: following } })
-			.sort({ createdAt: -1 })
-			.populate({
-				path: "user",
-				select: "-password",
-			})
-			.populate({
-				path: "comments.user",
-				select: "-password",
-			});
+        const feedPosts = await Post.find({ user: { $in: following } })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "user",
+                select: "-password",
+            })
+            .populate({
+                path: "comments.user",
+                select: "-password",
+            });
 
-		// Shuffle posts using Math.random for random ordering
-		const shuffledPosts = feedPosts.sort(() => Math.random() - 0.5);
+        const shuffledPosts = feedPosts.sort(() => Math.random() - 0.5);
 
-		res.status(200).json(shuffledPosts);
-	} catch (error) {
-		console.log("Error in getFollowingPosts controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
-	}
+        res.status(200).json(shuffledPosts);
+    } catch (error) {
+        console.log("Error in getFollowingPosts controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
+
 export const getUserPosts = async (req, res) => {
-	try {
-		const { name } = req.params;
+    try {
+        const { name } = req.params;
 
-		const user = await User.findOne({ name });
-		if (!user) return res.status(404).json({ error: "User not found" });
+        const user = await User.findOne({ name });
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-		const posts = await Post.find({ user: user._id })
-			.sort({ createdAt: -1 })
-			.populate({
-				path: "user",
-				select: "-password",
-			})
-			.populate({
-				path: "comments.user",
-				select: "-password",
-			});
+        const posts = await Post.find({ user: user._id })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "user",
+                select: "-password",
+            })
+            .populate({
+                path: "comments.user",
+                select: "-password",
+            });
 
-		res.status(200).json(posts);
-	} catch (error) {
-		console.log("Error in getUserPosts controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
-	}
+        res.status(200).json(posts);
+    } catch (error) {
+        console.log("Error in getUserPosts controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
+
 export const getLikedPosts = async (req, res) => {
-	const userId = req.params.id;
+    const userId = req.params.id;
 
-	try {
-		const user = await User.findById(userId);
-		if (!user) return res.status(404).json({ error: "User not found" });
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-		const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
-			.populate({
-				path: "user",
-				select: "-password",
-			})
-			.populate({
-				path: "comments.user",
-				select: "-password",
-			});
+        const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
+            .populate({
+                path: "user",
+                select: "-password",
+            })
+            .populate({
+                path: "comments.user",
+                select: "-password",
+            });
 
-		res.status(200).json(likedPosts);
-	} catch (error) {
-		console.log("Error in getLikedPosts controller: ", error);
-		res.status(500).json({ error: "Internal server error" });
-	}
+        res.status(200).json(likedPosts);
+    } catch (error) {
+        console.log("Error in getLikedPosts controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };

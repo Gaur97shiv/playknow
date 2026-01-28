@@ -2,16 +2,16 @@ import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import {  useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const CreatePost = () => {
-	const [text, setText] = useState("");
-	const [img, setImg] = useState(null);
+        const [text, setText] = useState("");
+        const [img, setImg] = useState(null);
 
-	const imgRef = useRef(null);
-    const {data:authUser}=useQuery({queryKey: ['authUser']})
-	const queryClient=useQueryClient();
+        const imgRef = useRef(null);
+        const queryClient = useQueryClient();
+        const authUser = queryClient.getQueryData(['authUser']);
 
 const { mutate: createPost ,isPending } = useMutation({
   mutationFn: async ({ text, img }) => {
@@ -34,8 +34,8 @@ const { mutate: createPost ,isPending } = useMutation({
     }
   },
   onSuccess:(data) =>{
-	setText("");
-	setImg(null);
+        setText("");
+        setImg(null);
    toast.success("Post created successfully");
    queryClient.invalidateQueries({ queryKey: ['posts'] });
    queryClient.invalidateQueries({ queryKey: ['authUser'] });
@@ -49,65 +49,65 @@ const { mutate: createPost ,isPending } = useMutation({
 });
 
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		createPost({text, img});
-	};
+        const handleSubmit = (e) => {
+                e.preventDefault();
+                createPost({text, img});
+        };
 
-	const handleImgChange = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = () => {
-				setImg(reader.result);
-			};
-			reader.readAsDataURL(file);
-		}
-	};
+        const handleImgChange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                                setImg(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                }
+        };
 
-	return (
-		<div className='vintage-card-inset flex p-4 items-start gap-4 border-b-4 border-soil'>
-			<div className='avatar'>
-				<div className='w-10 rounded-full avatar-vintage overflow-hidden'>
-					<img src={authUser.profileImg || "/avatar-placeholder.png"} />
-				</div>
-			</div>
-			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
-				<textarea
-					className='textarea w-full p-2 text-lg resize-none text-bark placeholder-soil'
-					placeholder='What is on your mind?'
-					value={text}
-					onChange={(e) => setText(e.target.value)}
-				/>
-				{img && (
-					<div className='relative w-72 mx-auto'>
-						<IoCloseSharp
-							className='absolute top-2 right-2 text-parchment bg-rust rounded-full w-6 h-6 cursor-pointer p-1 hover:bg-terracotta transition-colors'
-							onClick={() => {
-								setImg(null);
-								imgRef.current.value = null;
-							}}
-						/>
-						<img src={img} className='w-full mx-auto h-72 object-contain rounded border-4 border-soil' />
-					</div>
-				)}
+        return (
+                <div className='vintage-card-inset flex p-4 items-start gap-4 border-b-4 border-soil'>
+                        <div className='avatar'>
+                                <div className='w-10 rounded-full avatar-vintage overflow-hidden'>
+                                        <img src={authUser.profileImg || "/avatar-placeholder.png"} />
+                                </div>
+                        </div>
+                        <form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
+                                <textarea
+                                        className='textarea w-full p-2 text-lg resize-none text-bark placeholder-soil'
+                                        placeholder='What is on your mind?'
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                />
+                                {img && (
+                                        <div className='relative w-72 mx-auto'>
+                                                <IoCloseSharp
+                                                        className='absolute top-2 right-2 text-parchment bg-rust rounded-full w-6 h-6 cursor-pointer p-1 hover:bg-terracotta transition-colors'
+                                                        onClick={() => {
+                                                                setImg(null);
+                                                                imgRef.current.value = null;
+                                                        }}
+                                                />
+                                                <img src={img} className='w-full mx-auto h-72 object-contain rounded border-4 border-soil' />
+                                        </div>
+                                )}
 
-				<div className='flex justify-between border-t-4 py-3 border-soil'>
-					<div className='flex gap-3 items-center'>
-						<CiImageOn
-							className='w-6 h-6 cursor-pointer text-sepia hover:text-rust transition-colors'
-							onClick={() => imgRef.current.click()}
-						/>
-						<BsEmojiSmileFill className='w-5 h-5 cursor-pointer text-rust hover:text-terracotta transition-colors' />
-					</div>
-					<input type='file' accept='image/*' hidden ref={imgRef} onChange={handleImgChange} />
-					<button className='vintage-btn-primary rounded text-sm px-5 py-2'>
-						{isPending ? "Posting..." : "Post"}
-					</button>
-				</div>
-			
-			</form>
-		</div>
-	);
+                                <div className='flex justify-between border-t-4 py-3 border-soil'>
+                                        <div className='flex gap-3 items-center'>
+                                                <CiImageOn
+                                                        className='w-6 h-6 cursor-pointer text-sepia hover:text-rust transition-colors'
+                                                        onClick={() => imgRef.current.click()}
+                                                />
+                                                <BsEmojiSmileFill className='w-5 h-5 cursor-pointer text-rust hover:text-terracotta transition-colors' />
+                                        </div>
+                                        <input type='file' accept='image/*' hidden ref={imgRef} onChange={handleImgChange} />
+                                        <button className='vintage-btn-primary rounded text-sm px-5 py-2'>
+                                                {isPending ? "Posting..." : "Post"}
+                                        </button>
+                                </div>
+                        
+                        </form>
+                </div>
+        );
 };
 export default CreatePost;

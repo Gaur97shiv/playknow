@@ -5,6 +5,7 @@ import LoginPage from "./pages/auth/login/LoginPage";
 import SignUpPage from "./pages/auth/signup/SignUpPage";
 import NotificationPage from "./pages/notification/NotificationPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import TransactionHistoryPage from "./pages/transactions/TransactionHistoryPage";
 
 import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPanel";
@@ -43,7 +44,6 @@ function App() {
 
 	return (
 		<div className='flex max-w-6xl mx-auto'>
-			{/* Common component, bc it's not wrapped with Routes */}
 			{authUser && <Sidebar />}
 			<Routes>
 				<Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
@@ -51,6 +51,7 @@ function App() {
 				<Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
 				<Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
 				<Route path='/profile/:name' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />
+				<Route path='/transactions' element={authUser ? <TransactionHistoryPage /> : <Navigate to='/login' />} />
 			</Routes>
 			{authUser && <RightPanel />}
 			<Toaster />
