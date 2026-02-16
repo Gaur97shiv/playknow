@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: playknow-backend
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node be/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        scope: runtime
+      - key: MONGODB_URI
+        scope: runtime
+        sync: false
+      - key: JWT_SECRET
+        scope: runtime
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        scope: runtime
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        scope: runtime
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        scope: runtime
+        sync: false
+      - key: FRONTEND_URL
+        value: https://playknow-frontend.onrender.com
+
+  - type: static
+    name: playknow-frontend
+    runtime: static
+    branch: main
+    buildCommand: cd fe/vite-project && npm install && npm run build
+    staticPublishPath: fe/vite-project/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://playknow-backend.onrender.com
