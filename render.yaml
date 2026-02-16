@@ -4,7 +4,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install
+    buildCommand: rm -rf node_modules package-lock.json && npm install
     startCommand: node be/server.js
     envVars:
       - key: NODE_ENV
@@ -33,7 +33,7 @@ services:
     name: playknow-frontend
     runtime: static
     branch: main
-    buildCommand: cd fe/vite-project && npm install && npm run build
+    buildCommand: cd fe/vite-project && rm -rf node_modules package-lock.json && npm install && npm run build
     staticPublishPath: fe/vite-project/dist
     envVars:
       - key: VITE_API_URL
