@@ -34,8 +34,8 @@ services:
     name: playknow-frontend
     runtime: static
     branch: main
-    buildCommand: cd fe/vite-project && npm cache clean --force && npm ci --prefer-offline && npm run build
+    buildCommand: cd fe/vite-project && npm cache clean --force && rm -rf node_modules package-lock.json && npm install && npm run build
     staticPublishPath: fe/vite-project/dist
     envVars:
       - key: VITE_API_URL
-        value: https://playknow-backend.onrender.com
+        value: https://playknow-1.onrender.com
