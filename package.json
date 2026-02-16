@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/Gaur97shiv/playknow#readme",
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",

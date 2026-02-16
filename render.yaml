@@ -2,9 +2,10 @@ services:
   - type: web
     name: playknow-backend
     runtime: node
+    nodeVersion: 20.11.0
     region: oregon
     plan: free
-    buildCommand: rm -rf node_modules package-lock.json && npm install
+    buildCommand: npm cache clean --force && rm -rf node_modules package-lock.json && npm install && npm audit fix --force
     startCommand: node be/server.js
     envVars:
       - key: NODE_ENV
@@ -33,7 +34,7 @@ services:
     name: playknow-frontend
     runtime: static
     branch: main
-    buildCommand: cd fe/vite-project && rm -rf node_modules package-lock.json && npm install && npm run build
+    buildCommand: cd fe/vite-project && npm cache clean --force && npm ci --prefer-offline && npm run build
     staticPublishPath: fe/vite-project/dist
     envVars:
       - key: VITE_API_URL
